@@ -1,0 +1,24 @@
+# misc
+.DS_Store
+/docker-volumes
+/outputs
+/secrets
+.vscode
+/limited-sample-data
+/sample-data
+
+.ipynb_checkpoints/
+
+/testing.ipynb
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/

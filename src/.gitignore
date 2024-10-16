@@ -1,0 +1,19 @@
+.DS_Store
+/secrets
+
+# Python virtualenv
+__pycache__/
+
+
+# Build artifacts
+/build/
+/dist/
+/out/
+*.class
+*.o
+*.exe
+
+# Environment configuration files
+.env
+.env.local
+.env.*.local

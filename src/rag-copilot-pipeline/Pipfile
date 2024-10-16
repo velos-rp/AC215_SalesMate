@@ -1,0 +1,36 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+user-agent = "*"
+requests = "*"
+google-cloud-storage = "*"
+google-generativeai = "*"
+google-cloud-aiplatform = "*"
+pandas = "*"
+langchain = "*"
+llama-index = "*"
+chromadb = "*"
+langchain-community = "*"
+pyyaml = "*"
+pdfplumber = "*"
+pytest = "*"
+transformers = {extras = ["torch"], version = "*"}
+llama-index-embeddings-huggingface = "*"
+llama-index-embeddings-gemini = "*"
+jupyterlab = "*"
+ipympl = "*"
+notebook = "*"
+llama-index-embeddings-vertex-endpoint = "*"
+llama-index-vector-stores-chroma = "*"
+llama-index-llms-vertex = "*"
+llama-index-embeddings-vertex = "*"
+langchain-chroma = "*"
+langchain-google-vertexai = "*"
+
+[requires]
+python_version = "3.12"
