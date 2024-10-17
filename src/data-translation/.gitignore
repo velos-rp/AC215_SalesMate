@@ -1,0 +1,5 @@
+/secrets
+/sample-data
+/output
+__pycache__/
+.DS_Store
