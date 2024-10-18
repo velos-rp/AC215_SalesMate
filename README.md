@@ -22,11 +22,11 @@ We got access to 1235 sales calls, which we used to finetune the model. Those ca
 
 2. Since at this stage we are fine-tuning Gemini, we must put the data in the format it expects, that is, a jsol, were each row is a question and an answer, instead of an entire call. After this procedure, we have a jsol with over 10k rows. This is devidided into a train and a test set, were the test set has 250 cases, and the test set has the rest. 
 
-TODO: Do we have container?
+See the data-translation container for more details of the translation dataprocessing pipeline.
 
 **Data Versioning**
 
-TODO: add here
+We are in the process of transitioning our cloud provider from GCP to AWS [we are still waiting for AWS credits for this as we are stuck on the free tier]. We aim to utilize Amazon Delta Lake for a naitively versioned data store as per the recommendation of our TF Mentor. Otherwise we will utilize an S3 bucket with DVC. 
 
 ### User interface ###
 
