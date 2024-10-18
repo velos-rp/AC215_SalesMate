@@ -5,4 +5,5 @@ Directions to run the data-translation container:
 2. `cd src/data-translation`
 2. Execute `sh docker-shell.sh`
 3. Ensure that the CSV to be processed is located in a local `data` directory.
-4. Execute `python cli.py data/data.csv` - This will process the data in `data/data.csv` and save the results in `output/data_translated.csv`.
+4. Execute `python cli.py data/data.csv` - This will process the data in `data/data.csv` and save the results in `output/data_translated.csv` and then generate a sample with train and test jsol files.
+5. Add jsol files to the bucket from which the finetuning-pipeline will read

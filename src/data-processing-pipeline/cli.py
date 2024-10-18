@@ -84,6 +84,28 @@ def translate_df(df):
 
     return df
 
+def generate_train_test(df):
+    data = []
+    for _, row in df.iterrows():
+        # Parse the string as a list of dictionaries
+        conversation = ast.literal_eval(row['transcription_translated'])
+        
+        for i in range(0, len(conversation), 2):
+            if i + 1 < len(conversation):
+                user_part = conversation[i+1].get('message', '').replace("user:", "").strip()
+                bot_part = conversation[i].get('message', '').replace("bot:", "").replace("bot", "model").strip()
+
+                data.append({
+                    "contents": [
+                        {"role": "user", "parts": [{"text": user_part}]},
+                        {"role": "model", "parts": [{"text": bot_part}]}
+                    ]
+                })
+
+    n_size = 1000
+    data_train = random.sample(data, n_size)
+    data_test = random.sample(data, n_size)
+    return data_train, data_test
 
 def main(args):
     df = pd.read_csv(args.input)
@@ -94,6 +116,18 @@ def main(args):
 
     df_translated.to_csv(f"{OUTPUT_FOLDER}/{file_name}_translated.csv", index=False)
 
+    data_train, data_test = generate_train_test(df_translated)
+    # Save the data as JSONL
+    output_root = 'sample_1k_'
+    output_train = output_root + "train.jsonl"
+    output_test = output_root + "test.jsonl"
+    with open(output_train , 'w', encoding='utf-8') as f:
+    for entry in data_train:
+        f.write(json.dumps(entry) + '\n')
+
+    with open(output_test , 'w', encoding='utf-8') as f:
+        for entry in data_test:
+            f.write(json.dumps(entry) + '\n')
 
 if __name__ == "__main__":
     # Generate the inputs arguments parser

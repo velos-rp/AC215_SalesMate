@@ -66,4 +66,11 @@ We trained the gemini-1.5-flash-002, for 3 epochs and adapter size of 4. Followi
 
 ## Running the code
 
-Instructions for running each of the parts of the code is contained in the README inside the folder of each component in src
+Instructions for running each of the parts of the code is contained in the README inside the folder of each component in src:
+1. chat-container -> container were you can talk to the llm located in llm-backend-ec2 via a chat interface
+2. data-processing-pipeline -> container to translate and process the data used for fine-tuning
+3. finetuning-pipeline -> container to fine-tune Gemini using the data generated in data-processing-pipeline
+4. llm-backend-pipeline -> code used in EC2 to set up a server with a llama model
+5. rag-copilot-pipeline -> container setting up an infrascturucture to run RAG on pdfs and give answers rrecommendation
+
+Right now each part must be run independently, but we have added a docker-compose in the src folder that today is running only the rag-copilot-pipeline but in the future will run the end-to-end process. 
