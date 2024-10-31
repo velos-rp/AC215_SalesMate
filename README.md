@@ -1,4 +1,4 @@
-﻿# AC215 - Milestone2 - SalesMate
+﻿# AC215 SalesMate
 
 **Team Members**
 Rafael Hoffmann Fallgatter, Rajiv Swamy and Vincent Huang
