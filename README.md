@@ -10,10 +10,6 @@ SalesMate
 The objective of this project is to develop a simulation of a sales chat where the AI plays the role of a client and the user must make a sale as a means of practice sales skills. More specifically, it will simulate a situation where the user is offering financial services. This was chosen since we have a dataset of past calls in this situation. 
 The app will be a chat interface where the AI answers using a model fine-tuned in real sales conversations. Moreover, the app will also have a copilot, which gives recommendation to the seller of how to answer to technical questions by having access to a knowledge base of pdfs of finance documents using RAG. 
 
-## Milestone2 ##
-
-In this milestone, we have developed a first version of all the main components of the application, but not yet cconnecting them in single a application. The next step is to make those connections and improve performance of each component. 
-
 ### Data ###
 We got access to 1235 sales calls, which we used to finetune the model. Those calls were made by a Brazilian company and therefore were all in Portuguese. Therefore the first step of the data processing was 
 
