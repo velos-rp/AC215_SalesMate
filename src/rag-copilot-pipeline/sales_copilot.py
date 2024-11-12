@@ -165,7 +165,7 @@ def process_queries(input, collection_name, custom_settings = False):
     
     for query in queries:
         response = query_engine.query(query)
-        insights.append(response)
+        insights.append((query, response.response))
         print("-"*80)
         print(f"Query: {query}")
         print(f"Response: {response}")

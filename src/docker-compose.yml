@@ -9,9 +9,13 @@ services:
         volumes:
             - ./rag-copilot-pipeline/secrets:/secrets
             - ./rag-copilot-pipeline:/app
+        ports:
+            - 8081:8081 # Expose the FastAPI port to host
         environment:
-            GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
-            GCP_PROJECT: $GCP_PROJECT
+            GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
+            GCP_PROJECT: "ac-215-436117"
+        entrypoint: ["/bin/bash", "-c", "pipenv run fastapi dev server.py --host 0.0.0.0 --port 8081 --reload"]
+        # command: ["fastapi dev server.py --port 8081"]
         depends_on:
             - chromadb
     chromadb:
