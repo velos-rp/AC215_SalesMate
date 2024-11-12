@@ -31,6 +31,7 @@ llama-index-llms-vertex = "*"
 llama-index-embeddings-vertex = "*"
 langchain-chroma = "*"
 langchain-google-vertexai = "*"
+fastapi = {extras = ["standard"], version = "*"}
 
 [requires]
 python_version = "3.12"
