@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 from pprint import pprint
+from google.cloud import storage
 import ast
 from google.cloud import translate
 from google.cloud import translate_v2
@@ -16,6 +17,9 @@ PARENT = f"projects/{GCP_PROJECT}"
 OUTPUT_FOLDER = "output"
 KEYS_TO_TRANSLATE = ["message", "summary", "title", "type"]
 
+RAW_EXTRACT_BLOB_NAME = "data/extract_calls_pt.csv"
+OUTPUT_ROOT = "gs://test-llm-rp/sample-calls/sample_1k_" # 
+BUCKET_NAME = "ac215_salesmate"
 
 translate_client = translate_v2.Client()
 
@@ -34,7 +38,6 @@ def translate_textV2(text: str, target, source = None) -> dict:
     result = translate_client.translate(text, target_language=target, source_language=source)
 
     return result["translatedText"]
-
 
 translation_cache = {}
 
@@ -73,7 +76,6 @@ def col_translation(data_str, keys_to_translate):
 
     return data
 
-
 def translate_df(df):
     df['feedbacks_translated'] = df['feedbacks'].progress_apply(col_translation, keys_to_translate = KEYS_TO_TRANSLATE)
     df['transcription_translated'] = df['transcription'].progress_apply(col_translation, keys_to_translate = KEYS_TO_TRANSLATE)
@@ -107,38 +109,40 @@ def generate_train_test(df):
     data_test = random.sample(data, n_size)
     return data_train, data_test
 
-def main(args):
-    df = pd.read_csv(args.input)
+def save_jsonl_to_gcs(data, bucket_name, destination_blob_name):
+        """Saves a list of dictionaries as JSONL format to GCS."""
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(destination_blob_name)
+
+        # Convert data to JSONL format
+        jsonl_data = '\n'.join(json.dumps(entry) for entry in data)
+        
+        # Upload JSONL to GCS
+        blob.upload_from_string(jsonl_data, content_type='application/jsonl')
+        print(f"Data saved to {destination_blob_name} in bucket {bucket_name}.")
+
+def process_pipeline():
+
+    storage_client = storage.Client()
+    # Get the bucket
+    bucket = storage_client.bucket(BUCKET_NAME)
+    # Define the blob (object in the bucket)
+    blob = bucket.blob(RAW_EXTRACT_BLOB_NAME)
+    # Download the file
+    data = blob.download_as_text()
+    df = pd.read_csv(pd.compat.StringIO(data))
 
     df_translated = translate_df(df)
 
-    file_name = args.input.name.split(".")[0]
+    df_translated_transcription = df_translated[["transcription_translated"]]
 
-    df_translated.to_csv(f"{OUTPUT_FOLDER}/{file_name}_translated.csv", index=False)
-
-    data_train, data_test = generate_train_test(df_translated)
+    data_train, data_test = generate_train_test(df_translated_transcription)
     # Save the data as JSONL
-    output_root = 'sample_1k_'
-    output_train = output_root + "train.jsonl"
-    output_test = output_root + "test.jsonl"
-    with open(output_train , 'w', encoding='utf-8') as f:
-    for entry in data_train:
-        f.write(json.dumps(entry) + '\n')
 
-    with open(output_test , 'w', encoding='utf-8') as f:
-        for entry in data_test:
-            f.write(json.dumps(entry) + '\n')
+    output_train_blob_name = OUTPUT_ROOT + "train.jsonl"
+    output_test_blob_name = OUTPUT_ROOT + "test.jsonl"
 
-if __name__ == "__main__":
-    # Generate the inputs arguments parser
-    parser = argparse.ArgumentParser(description="CLI for dataset translation")
-
-    parser.add_argument(
-        "input",
-        type=Path,
-        help="Input file path",
-    )
-
-    args = parser.parse_args()
-
-    main(args)
+    # Save train and test data to GCS
+    save_jsonl_to_gcs(data_train, BUCKET_NAME, output_train_blob_name)
+    save_jsonl_to_gcs(data_test, BUCKET_NAME, output_test_blob_name)

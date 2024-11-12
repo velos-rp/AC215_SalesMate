@@ -8,11 +8,13 @@ from google.cloud import storage
 import vertexai
 from vertexai.preview.tuning import sft
 from vertexai.generative_models import GenerativeModel, GenerationConfig
+from data_processing import process_pipeline
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 TRAIN_DATASET = "gs://test-llm-rp/sample-calls/sample_1k_train.jsonl" # Replace with your dataset
 VALIDATION_DATASET = "gs://test-llm-rp/sample-calls/sample_1k_test.jsonl" # Replace with your dataset
+
 GCP_LOCATION = "us-central1"
 GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002" # gemini-1.5-pro-002
 # Configuration settings for the content generation
@@ -75,9 +77,11 @@ def chat():
     generated_text = response.text
     print("Fine-tuned LLM Response:", generated_text)
      
-
 def main(args=None):
     print("CLI Arguments:", args)
+
+    if args.process_data:
+        process_pipeline()
 
     if args.train:
         train()
@@ -90,6 +94,12 @@ if __name__ == "__main__":
     # Generate the inputs arguments parser
     # if you type into the terminal '--help', it will provide the description
     parser = argparse.ArgumentParser(description="CLI")
+
+    parser.add_argument(
+        "--process_data",
+        action="store_true",
+        help="Process dataset",
+    )
 
     parser.add_argument(
         "--train",
