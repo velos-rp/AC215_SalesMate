@@ -1,0 +1,9 @@
+/secrets
+
+.ipynb_checkpoints/
+
+/testing.ipynb
+
+
+.DS_Store
+/chat-history

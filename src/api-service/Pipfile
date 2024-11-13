@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+google-cloud-storage = "*"
+google-generativeai = "*"
+google-cloud-aiplatform = "*"
+pandas = "*"
+uvicorn = "*"
+fastapi = {extras = ["standard"], version = "*"}
+python-multipart = "*"
+langchain = "*"
+llama-index = "*"
+llama-index-llms-vertex = "*"
+langchain-google-vertexai = "*"
+jupyterlab = "*"
+ipympl = "*"
+notebook = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

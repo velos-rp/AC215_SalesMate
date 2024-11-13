@@ -32,6 +32,7 @@ llama-index-embeddings-vertex = "*"
 langchain-chroma = "*"
 langchain-google-vertexai = "*"
 fastapi = {extras = ["standard"], version = "*"}
+uvicorn = "*"
 
 [requires]
 python_version = "3.12"

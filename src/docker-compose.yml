@@ -1,6 +1,6 @@
 networks:
     default:
-        name: llm-rag-network
+        name: sales-mate-network
         external: true
 services:
     rag-copilot-pipeline:
@@ -14,10 +14,23 @@ services:
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
             GCP_PROJECT: "ac-215-436117"
-        entrypoint: ["/bin/bash", "-c", "pipenv run fastapi dev server.py --host 0.0.0.0 --port 8081 --reload"]
-        # command: ["fastapi dev server.py --port 8081"]
+            DEV: "0" # Change to 0 for running web server
         depends_on:
             - chromadb
+    sales-mate-api-service:
+        image: sales-mate-api-service
+        container_name: sales-mate-api-service
+        volumes:
+            - ./api-service/secrets:/secrets
+            - ./api-service:/app
+        ports:
+            - 9000:9000 # Expose the FastAPI port to host
+        environment:
+            GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
+            GCP_PROJECT: "ac-215-436117"
+            DEV: "0" # Change to 0 for running web server
+        depends_on:
+            - rag-copilot-pipeline
     chromadb:
         image: chromadb/chroma:latest
         container_name: llm-rag-chromadb
