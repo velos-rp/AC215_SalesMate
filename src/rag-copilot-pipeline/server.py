@@ -6,7 +6,7 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Welcome to the RAG Copilot API"}
 
 
 # define route for sales copilot, /{collection_name}/query
