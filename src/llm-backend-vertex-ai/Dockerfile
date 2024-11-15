@@ -1,7 +1,7 @@
 # Use the official Debian-hosted Python image
-FROM python:3.12-slim-bookworm
+FROM python:3.9-slim-buster
 
-ARG DEBIAN_PACKAGES="build-essential git screen vim"
+ARG DEBIAN_PACKAGES="build-essential git"
 
 # Prevent apt from showing prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -16,10 +16,7 @@ ENV PYENV_SHELL=/bin/bash
 # Tell Python to disable buffering so we don't lose any logs.
 ENV PYTHONUNBUFFERED=1
 
-RUN echo "Acquire::http::Pipeline-Depth 0; \n Acquire::http::No-Cache true; \n Acquire::BrokenProxy    true;" > /etc/apt/apt.conf.d/99fixbadproxy
-
-
-# Ensure we have an up to date baseline, install dependencies and
+# Ensure we have an up-to-date baseline, install dependencies, and
 # create a user so we don't run the app as root
 RUN set -ex; \
     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done && \
@@ -30,26 +27,29 @@ RUN set -ex; \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir --upgrade pip && \
     pip install pipenv && \
-    useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
+    useradd -ms /bin/bash app -d /home/app -u 1000 && \
     mkdir -p /app && \
     mkdir -p /persistent && \
     chown app:app /persistent && \
     chown app:app /app
 
-
 # Switch to the new user
 USER app
 WORKDIR /app
 
-# Install python packages, add Pipfile.lock once the lock file is established
-ADD --chown=app:app Pipfile /app/
+# Install python packages
+ADD --chown=app:app Pipfile Pipfile.lock /app/
 
-# Change this to pipenv sync once the lock file is established
-RUN pipenv install
+RUN pipenv sync
 
-# Add the rest of the source code. This is done last so we don't invalidate all
-# layers when we change a line of code.
+# Add the rest of the source code
 ADD --chown=app:app . /app
 
-# Entry point
-ENTRYPOINT ["/bin/bash","./docker-entrypoint.sh"]
+# Expose the port that the Flask app will run on
+EXPOSE 8080
+
+# Set the environment variable for Flask
+ENV FLASK_APP=cli.py
+
+# Entry point to run the Flask app
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
