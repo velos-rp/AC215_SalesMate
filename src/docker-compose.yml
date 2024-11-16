@@ -26,9 +26,10 @@ services:
         ports:
             - 9000:9000 # Expose the FastAPI port to host
         environment:
-            GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
-            GCP_PROJECT: "ac-215-436117"
+            GOOGLE_APPLICATION_CREDENTIALS: "/secrets/llm-service-account.json"
+            GCP_PROJECT: "project-id-3187519002330642642"
             DEV: "0" # Change to 0 for running web server
+            FINETUNED_MODEL: "1" # Toggle for using finetuned model or not
         depends_on:
             - rag-copilot-pipeline
     chromadb:

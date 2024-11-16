@@ -27,10 +27,23 @@ generation_config = {
 
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 
-generative_model = GenerativeModel(
-	GENERATIVE_MODEL,
-	system_instruction=[SYSTEM_INSTRUCTION]
-)
+
+FINETUNED = os.environ["FINETUNED_MODEL"]
+
+if FINETUNED != "1":
+  
+  generative_model = GenerativeModel(
+    GENERATIVE_MODEL,
+    system_instruction=[SYSTEM_INSTRUCTION]
+  )
+  print("Using general model fir Gemini calls")
+else:
+  MODEL_ENDPOINT = "projects/project-id-3187519002330642642/locations/us-central1/endpoints/6870682135716429824"  # Replace with your finetuned model endpoint
+  generative_model = GenerativeModel(
+    MODEL_ENDPOINT, 
+    system_instruction=[SYSTEM_INSTRUCTION]
+  )
+  print("Using finetuned model for Gemini calls")
 
 
 # Initialize chat sessions
