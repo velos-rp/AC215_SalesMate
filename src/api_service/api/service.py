@@ -1,6 +1,6 @@
+from api.routers import direct_chat, rag_copilot
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from api.routers import rag_copilot, direct_chat
 
 # Setup FastAPI app
 app = FastAPI(title="API Server", description="API Server", version="v1")
@@ -14,6 +14,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Routes
 @app.get("/")

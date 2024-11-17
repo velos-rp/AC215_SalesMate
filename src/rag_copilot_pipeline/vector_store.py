@@ -437,7 +437,7 @@ def generate_text_embedding(query, embedding_model):
 
 
 def batch_generate_text_embeddings(
-    chunks, embedding_model, dimensionality: int = 256, batch_size=250
+    chunks, embedding_model, dimensionality: int = 768, batch_size=250
 ):
     # Max batch size is 250 for Vertex AI
     all_embeddings = []
@@ -456,7 +456,7 @@ def main():
     collection_name = "test_collection"
     chroma_db = ChromaDB(collection_name)
     print("Created instance of vector store")
-    chroma_db.reset_index()
+    chroma_db.reset_collection()
 
     sample_texts = [
         "The sky is blue.",
@@ -493,7 +493,7 @@ def main():
         "This is batch text 15.",
     ]
 
-    batch_metadata = {"source": "batch_data"}
+    batch_metadata = [{"source": "batch_data"}] * len(batch_texts)
 
     # Perform five individual writes
     for i in range(5):
@@ -512,7 +512,7 @@ def main():
     results = chroma_db.read(query_text, top_k=10)
 
     print("Query Results:")
-    for result in results["documents"]:
+    for result in results:
         print(result)
 
     # Delete the collection
