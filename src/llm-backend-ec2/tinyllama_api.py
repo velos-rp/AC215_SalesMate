@@ -1,13 +1,6 @@
-import torch
-from flask import Flask, request, jsonify
-from transformers import pipeline
-
 # Initialize the text-generation pipeline
-pipe = pipeline(
-[detached from 3416.tinyllama]
-ubuntu@ip-172-31-22-236:~$ cat tinyllama_api.py 
 import torch
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from transformers import pipeline
 
 # Initialize the text-generation pipeline
@@ -20,21 +13,29 @@ pipe = pipeline(
 
 app = Flask(__name__)
 
-@app.route('/generate', methods=['POST'])
+
+@app.route("/generate", methods=["POST"])
 def generate():
     try:
         # Get the prompt from the incoming request
         data = request.get_json()
-        query = data.get('prompt')
+        query = data.get("prompt")
 
         # Define the conversation template
+        content = "You are a friendly chatbot who always funny and interesting. \
+              You only reply with the actual answer without repeating my question."
         messages = [
-            {"role": "system", "content": "You are a friendly chatbot who always funny and interesting. You only reply with the actual answer without repeating my question."},
-            {"role": "user", "content": query}
+            {
+                "role": "system",
+                "content": content,
+            },
+            {"role": "user", "content": query},
         ]
-        
+
         # Prepare the prompt
-        prompt = pipe.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        prompt = pipe.tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
 
         # Generate the output using the model
         outputs = pipe(
@@ -45,13 +46,14 @@ def generate():
             top_k=50,
             top_p=0.95,
         )
-        
+
         # Return the generated response
-        return jsonify({'response': outputs[0]['generated_text']})
+        return jsonify({"response": outputs[0]["generated_text"]})
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({"error": str(e)}), 400
+
 
 if __name__ == "__main__":
     # Run the app on port 5000
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)

@@ -1,5 +1,5 @@
-from fastapi import FastAPI
 import sales_copilot
+from fastapi import FastAPI
 
 app = FastAPI()
 
