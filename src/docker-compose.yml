@@ -7,8 +7,8 @@ services:
         image: rag-copilot-pipeline
         container_name: rag-copilot-pipeline
         volumes:
-            - ./rag-copilot-pipeline/secrets:/secrets
-            - ./rag-copilot-pipeline:/app
+            - ./rag_copilot_pipeline/secrets:/secrets
+            - ./rag_copilot_pipeline:/app
         ports:
             - 8081:8081 # Expose the FastAPI port to host
         environment:
@@ -21,8 +21,8 @@ services:
         image: sales-mate-api-service
         container_name: sales-mate-api-service
         volumes:
-            - ./api-service/secrets:/secrets
-            - ./api-service:/app
+            - ./api_service/secrets:/secrets
+            - ./api_service:/app
         ports:
             - 9000:9000 # Expose the FastAPI port to host
         environment:
@@ -38,7 +38,7 @@ services:
         ports:
             - 8000:8000
         volumes:
-            - ./rag-copilot-pipeline/docker-volumes/chromadb:/chroma/chroma
+            - ./rag_copilot_pipeline/docker-volumes/chromadb:/chroma/chroma
         environment:
             - IS_PERSISTENT=TRUE
             - ANONYMIZED_TELEMETRY=FALSE

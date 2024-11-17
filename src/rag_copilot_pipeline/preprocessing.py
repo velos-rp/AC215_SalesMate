@@ -23,7 +23,7 @@ from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
 EMBEDDING_MODEL = "text-embedding-004"
-EMBEDDING_DIMENSION = 256
+EMBEDDING_DIMENSION = 768
 INPUT_FOLDER = "input-datasets"
 OUTPUT_FOLDER = "outputs"
 CHROMADB_HOST = "llm-rag-chromadb"
@@ -175,7 +175,7 @@ def process_folder(
     return df
 
 
-def generate_text_embeddings(chunks, dimensionality: int = 256, batch_size=50):
+def generate_text_embeddings(chunks, dimensionality: int = 768, batch_size=50):
     # Max batch size is 250 for Vertex AI
     all_embeddings = []
     for i in range(0, len(chunks), batch_size):
