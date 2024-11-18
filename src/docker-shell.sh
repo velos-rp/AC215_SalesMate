@@ -3,13 +3,23 @@
 # exit immediately if a command exits with a non-zero status
 set -e
 
-# Set vairables
-# export BASE_DIR=$(pwd)
-# export PERSISTENT_DIR=$(pwd)/../persistent-folder/
-# export SECRETS_DIR=$(pwd)/secrets/
-export GCP_PROJECT="ac-215-436117" # CHANGE TO YOUR PROJECT ID
-export GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-key.json"
-export TARGET_IMAGE="sales-mate-api-service"
+DETACHED_MODE=""
+# Parse arguments
+while getopts "d" opt; do
+  case $opt in
+    d)
+      DETACHED_MODE="-d"
+      ;;
+    *)
+      echo "Usage: $0 [-d]"
+      echo "  -d    Run containers in detached mode"
+      exit 1
+      ;;
+  esac
+done
+
+export SECRETS_DIR_COPILOT="./rag_copilot_pipeline/secrets"
+export SECRETS_DIR_API="./api_service/secrets"
 
 
 # Create the network if we don't have it yet
@@ -23,4 +33,4 @@ docker build -t sales-mate-api-service -f ./api_service/Dockerfile ./api_service
 # docker compose run --rm --service-ports $TARGET_IMAGE
 
 # Run all containers
-docker compose up --build
+docker compose up --build $DETACHED_MODE

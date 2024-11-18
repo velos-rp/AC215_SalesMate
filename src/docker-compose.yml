@@ -7,7 +7,7 @@ services:
         image: rag-copilot-pipeline
         container_name: rag-copilot-pipeline
         volumes:
-            - ./rag_copilot_pipeline/secrets:/secrets
+            - ${SECRETS_DIR_COPILOT}:/secrets
             - ./rag_copilot_pipeline:/app
         ports:
             - 8081:8081 # Expose the FastAPI port to host
@@ -21,7 +21,7 @@ services:
         image: sales-mate-api-service
         container_name: sales-mate-api-service
         volumes:
-            - ./api_service/secrets:/secrets
+            - ${SECRETS_DIR_API}:/secrets
             - ./api_service:/app
         ports:
             - 9000:9000 # Expose the FastAPI port to host
