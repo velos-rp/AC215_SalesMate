@@ -15,18 +15,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Load Secrets for GCP Keys and validate json
+      # Step 2: Set up Python environment (specifically Python 3.12)
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Step 2.1: Set PYTHONPATH to include the root directory (or src if relevant)
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
+
+
+      # Step 3: Load Secrets for GCP Keys and validate json
       - name: Write Secret to JSON File
+        env:
+          GCP_KEY_COPILOT: ${{ secrets.GCP_KEY_COPILOT }}
+          GCP_KEY_API: ${{ secrets.GCP_KEY_API }}
         run: |
           mkdir -p src/rag_copilot_pipeline/secrets
           mkdir -p src/api_service/secrets
-          echo '${{ secrets.GCP_KEY_COPILOT }}' > src/rag_copilot_pipeline/secrets/gcp-key.json
-          echo '${{ secrets.GCP_KEY_API }}' > src/api_service/secrets/llm-service-account.json
+          python -c "import os; open('src/rag_copilot_pipeline/secrets/gcp-key.json', 'w').write(os.getenv('GCP_KEY_COPILOT', ''))"
+          python -c "import os; open('src/api_service/secrets/llm-service-account.json', 'w').write(os.getenv('GCP_KEY_API', ''))"
           jq empty src/rag_copilot_pipeline/secrets/gcp-key.json
           jq empty src/api_service/secrets/llm-service-account.json
 
 
-      # Step 3: Run the Docker Test Script
+      # Step 4: Run the Docker Test Script
       - name: Run Docker Tests
         run: |
           cd src
