@@ -8,7 +8,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    environment: Container_Testing
 
     steps:
       # Step 1: Checkout the repository code
