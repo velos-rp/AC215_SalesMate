@@ -1,0 +1,53 @@
+name: CI Multi-Container Test
+
+on:
+  push:
+    branches:
+      - "*"  # Triggers when code is pushed to any branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: Container_Testing
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Load Secrets for GCP Keys
+      - name: Write Secret to JSON File
+        run: |
+          mkdir -p src/rag_copilot_pipeline/secrets
+          mkdir -p src/api_service/secrets
+          echo '${{ secrets.GCP_KEY_COPILOT }}' > src/rag_copilot_pipeline/secrets/gcp-key.json
+          echo '${{ secrets.GCP_KEY_API }}' > src/api_service/secrets/gcp-key.json
+
+
+      # Step 3: Run the Docker Test Script
+      - name: Run Docker Tests
+        run: |
+          cd src
+          chmod +x ./docker-shell.sh
+          source docker-shell.sh -d
+          sleep 10
+
+          # Define the services to test
+          services=("rag-copilot-pipeline")
+
+          # Run pytest in each container
+          for service in "${services[@]}"; do
+            echo "Running tests in $service..."
+            docker compose exec "$service" pipenv run pytest || {
+              echo "Tests failed in $service. Aborting."
+              docker compose down
+              exit 1
+            }
+          done
+
+          # Stop the containers after tests
+          docker compose down
+
+          echo "All tests passed!"
+
+          cd ..
