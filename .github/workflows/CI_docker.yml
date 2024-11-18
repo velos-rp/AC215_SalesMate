@@ -15,13 +15,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Load Secrets for GCP Keys
+      # Step 2: Load Secrets for GCP Keys and validate json
       - name: Write Secret to JSON File
         run: |
           mkdir -p src/rag_copilot_pipeline/secrets
           mkdir -p src/api_service/secrets
           echo '${{ secrets.GCP_KEY_COPILOT }}' > src/rag_copilot_pipeline/secrets/gcp-key.json
-          echo '${{ secrets.GCP_KEY_API }}' > src/api_service/secrets/gcp-key.json
+          echo '${{ secrets.GCP_KEY_API }}' > src/api_service/secrets/llm-service-account.json
+          jq empty src/rag_copilot_pipeline/secrets/gcp-key.json
+          jq empty src/api_service/secrets/llm-service-account.json
 
 
       # Step 3: Run the Docker Test Script
