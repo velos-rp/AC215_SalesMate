@@ -420,7 +420,7 @@ class LlamaIndexDB:
     def delete_all_data():
         client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
         collections = client.list_collections()
-        for idx, collection in enumerate(collections):
+        for _, collection in enumerate(collections):
             client.delete_collection(name=collection.name)
         logger.info("Deleted all collections")
 
