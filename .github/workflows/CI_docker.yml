@@ -24,6 +24,11 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
 
+      # Step 2.2: Install dependencies for linting
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pylint black
 
       # Step 3: Load Secrets for GCP Keys and validate json
       - name: Write Secret to JSON File
@@ -38,6 +43,18 @@ jobs:
           jq empty src/rag_copilot_pipeline/secrets/gcp-key.json
           jq empty src/api_service/secrets/llm-service-account.json
 
+      # Step 4: Run linting (non-blocking)
+      - name: Run flake8
+        continue-on-error: true
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run pylint
+        continue-on-error: true
+        run: pylint src/
+
+      - name: Check code formatting with black
+        continue-on-error: true
+        run: black --check .
 
       # Step 4: Run the Docker Test Script
       - name: Run Docker Tests
