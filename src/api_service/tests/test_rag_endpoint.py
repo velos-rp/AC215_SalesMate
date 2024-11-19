@@ -2,7 +2,9 @@ import requests
 
 
 def test_rag_endpoint():
-    BASE = "http://0.0.0.0:9000"
+    HOST = "sales-mate-api-service"
+
+    BASE = f"http://{HOST}:9000"
     ENDPOINT = "rag-copilot"
     URL = f"{BASE}/{ENDPOINT}/"
 
