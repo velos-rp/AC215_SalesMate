@@ -19,8 +19,8 @@ services:
             test: ["CMD", "curl", "-f", "http://rag-copilot-pipeline:8081/"]
             interval: 10s
             timeout: 5s
-            retries: 8
-            start_period: 5s
+            retries: 15
+            start_period: 30s
         depends_on:
             - chromadb
     sales-mate-api-service:
@@ -40,8 +40,8 @@ services:
             test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9000/"]
             interval: 10s
             timeout: 5s
-            retries: 8
-            start_period: 5s
+            retries: 15
+            start_period: 30s
         depends_on:
             - rag-copilot-pipeline
     chromadb:
