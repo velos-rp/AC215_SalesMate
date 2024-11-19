@@ -5,9 +5,10 @@ echo "Container is running!!!"
 args="$@"
 echo $args
 
-if [[ -z ${args} ]]; 
+if [[ -z ${args} ]];
 then
-    pipenv shell
+  echo "No command provided."
+  exec /bin/bash
 else
-  pipenv run python $args
+  $args
 fi

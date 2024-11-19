@@ -1,22 +1,27 @@
-import os
 import argparse
-import pandas as pd
-import json
-import time
 import glob
-from google.cloud import storage
+import json
+import os
+import time
+
+import pandas as pd
 import vertexai
-from vertexai.preview.tuning import sft
-from vertexai.generative_models import GenerativeModel, GenerationConfig
 from data_processing import process_pipeline
+from google.cloud import storage
+from vertexai.generative_models import GenerationConfig, GenerativeModel
+from vertexai.preview.tuning import sft
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
-TRAIN_DATASET = "gs://test-llm-rp/sample-calls/sample_1k_train.jsonl" # Replace with your dataset
-VALIDATION_DATASET = "gs://test-llm-rp/sample-calls/sample_1k_test.jsonl" # Replace with your dataset
+TRAIN_DATASET = (
+    "gs://test-llm-rp/sample-calls/sample_1k_train.jsonl"  # Replace with your dataset
+)
+VALIDATION_DATASET = (
+    "gs://test-llm-rp/sample-calls/sample_1k_test.jsonl"  # Replace with your dataset
+)
 
 GCP_LOCATION = "us-central1"
-GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002" # gemini-1.5-pro-002
+GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002"  # gemini-1.5-pro-002
 # Configuration settings for the content generation
 generation_config = {
     "max_output_tokens": 3000,  # Maximum number of tokens for output
@@ -26,6 +31,7 @@ generation_config = {
 
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 
+
 def train(wait_for_job=False):
     print("train()")
 
@@ -34,17 +40,17 @@ def train(wait_for_job=False):
         source_model=GENERATIVE_SOURCE_MODEL,
         train_dataset=TRAIN_DATASET,
         validation_dataset=VALIDATION_DATASET,
-        epochs=3, # change to 2-3
+        epochs=3,  # change to 2-3
         adapter_size=4,
         learning_rate_multiplier=1.0,
         tuned_model_display_name="finetuning-rp-1ksample-v1",
     )
     print("Training job started. Monitoring progress...\n\n")
-    
+
     # Wait and refresh
     time.sleep(60)
     sft_tuning_job.refresh()
-    
+
     if wait_for_job:
         print("Check status of tuning job:")
         print(sft_tuning_job)
@@ -61,14 +67,14 @@ def train(wait_for_job=False):
 def chat():
     print("chat()")
     # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
-    #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
-    #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
-    MODEL_ENDPOINT = "projects/project-id-3187519002330642642/locations/us-central1/endpoints/6870682135716429824" # Finetuned model
-    
+    # MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
+    # MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
+    MODEL_ENDPOINT = "projects/project-id-3187519002330642642/locations/us-central1/endpoints/6870682135716429824"  # Finetuned model
+
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
     query = "Hello, who is it?"
-    print("query: ",query)
+    print("query: ", query)
     response = generative_model.generate_content(
         [query],  # Input prompt
         generation_config=generation_config,  # Configuration settings
@@ -76,16 +82,20 @@ def chat():
     )
     generated_text = response.text
     print("Fine-tuned LLM Response:", generated_text)
-     
+
+
 def main(args=None):
     print("CLI Arguments:", args)
 
     if args.process_data:
-        process_pipeline()
+        if args.data_path:
+            process_pipeline(data_path=args.data_path)
+        else:
+            process_pipeline(data_path=args.data_path)
 
     if args.train:
         train()
-    
+
     if args.chat:
         chat()
 
@@ -110,6 +120,11 @@ if __name__ == "__main__":
         "--chat",
         action="store_true",
         help="Chat with model",
+    )
+    parser.add_argument(
+        "--data_path",
+        type=str,
+        help="path inside the bucket to the input data",
     )
 
     args = parser.parse_args()

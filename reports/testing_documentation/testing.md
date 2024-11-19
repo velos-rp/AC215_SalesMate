@@ -3,7 +3,7 @@
 Our testing pipeline enables us to test the quality, integration, and functionality of our different applications/containers both locally and on the server. Since each of our applications functions are decomposed into containers we use Docker to deploy our containers and then run `pytest` on a set of tests local to each container.
 The tests for each individual container are found in the `<container>/tests` directory for each `<container>`. Currently, we have tests for the following containers: rag_copilot_pipeline and finetuning_pipeline.
 
-To run these tests, we use the action workflows with configurations located in the `.github/workflows/` directory.
+To run these tests, we use the action workflows with configurations located in the `.github/workflows/` directory. Therefore, after each push to github, all the required containers are started in Github and each of the tests are run inside the container. 
 
 
 ### Test Descriptions
@@ -14,7 +14,8 @@ To run these tests, we use the action workflows with configurations located in t
 
 #### Finetuning Pipeline
 
-TODO
+- `src/rag_copilot_pipeline/tests/test_preprocessing.py` We have one test that on the preprocessing workflow tha tests the chunking functionality of the pipeline.
+- `src/rag_copilot_pipeline/tests/test_vector_store.py` Another test tests the main functionalities of the vector database class by creating a toy collection, writing data to it, and querying it.
 
 
 
