@@ -27,9 +27,7 @@ export default async function RootLayout({ children }) {
             <body className="min-h-screen">
                 <ClientSessionProvider session={session}>
                     <SessionInit />
-                    <Header />
                     <main>{children}</main>
-                    <Footer />
                 </ClientSessionProvider>
             </body>
         </html>
