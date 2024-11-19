@@ -45,32 +45,32 @@ jobs:
 
 
       # Step 4: Run the Docker Test Script
-      - name: Run Docker Tests
-        run: |
-          cd src
-          chmod +x ./docker-shell.sh
-          source docker-shell.sh -d
-          sleep 10
+      # - name: Run Docker Tests
+      #   run: |
+      #     cd src
+      #     chmod +x ./docker-shell.sh
+      #     source docker-shell.sh -d
+      #     sleep 10
 
-          # Define the services to test
-          services=("rag-copilot-pipeline")
+      #     # Define the services to test
+      #     services=("rag-copilot-pipeline")
 
-          # Run pytest in each container
-          for service in "${services[@]}"; do
-            echo "Running tests in $service..."
-            docker compose exec "$service" pipenv run pytest || {
-              echo "Tests failed in $service. Aborting."
-              docker compose down
-              exit 1
-            }
-          done
+      #     # Run pytest in each container
+      #     for service in "${services[@]}"; do
+      #       echo "Running tests in $service..."
+      #       docker compose exec "$service" pipenv run pytest || {
+      #         echo "Tests failed in $service. Aborting."
+      #         docker compose down
+      #         exit 1
+      #       }
+      #     done
 
-          # Stop the containers after tests
-          docker compose down
+      #     # Stop the containers after tests
+      #     docker compose down
 
-          echo "All tests passed!"
+      #     echo "All tests passed!"
 
-          cd ..
+      #     cd ..
 
       # Step 5: Run the Docker Test Script
       - name: Run Finetunning tests

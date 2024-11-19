@@ -21,7 +21,7 @@ export IMAGE_NAME="gemini-finetuner"
 docker build -t $IMAGE_NAME -f Dockerfile .
 
 # Run Container
-docker run --name $IMAGE_NAME -ti \
+docker run --name $IMAGE_NAME \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
