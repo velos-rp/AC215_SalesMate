@@ -63,7 +63,7 @@ jobs:
       - name: Pre-create chat-history with permissions
         run: |
           sudo mkdir -p src/api_service/chat-history/gemini
-          sudo chmod -R 777 src/api_service/chat-history/gemini
+          sudo chmod -R 777 src/
     
       # Step 4: Run the Primary API Docker Test Script
       - name: Run Primary API Docker Tests
@@ -85,7 +85,7 @@ jobs:
           sleep 10s
 
           # Define the services to test
-          services=("rag-copilot-pipeline", "sales-mate-api-service")
+          services=("rag-copilot-pipeline" "sales-mate-api-service")
 
           # Run pytest in each container
           for service in "${services[@]}"; do
