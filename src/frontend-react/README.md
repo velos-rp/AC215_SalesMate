@@ -8,12 +8,14 @@ The SalesMate frontend is a React-based application designed to provide an immer
 ## Features
 
 ### **Home Page (`src/app/page.jsx`)**
+![Mock](../../images/frontend_home_page_screenshot.png)
 The home page introduces **SalesMate** and provides an overview of the platform. Key features include:
 - **About Section**: Learn about SalesMate's purpose and capabilities.
 - **List of Prior Chats**: Displays a list of previous training sessions (chats). Users can select a chat to reenter the session.
 - **"Start a New Run!" Button**: Allows users to initiate a new training session, redirecting them to the simulator page.
 
 ### **Simulator Page (`src/app/simulator/page.jsx`)**
+![Mock](../../images/frontend_simulator_page_screenshot.png)
 The simulator page is the core of the sales training experience. It features:
 - **Left Panel: Training Simulator Chat**
   - Users can engage in a simulated conversation with a "customer".
@@ -21,6 +23,7 @@ The simulator page is the core of the sales training experience. It features:
 - **Right Panel: RAG-backed Knowledge Helper**
   - Users can ask questions to the Knowledge Helper, which is powered by a Retrieval-Augmented Generation (RAG) model.
   - **Note**: Conversations with the Knowledge Helper are **transient** and are not persisted after leaving the page.
+Click on the SalesMate logo in the top left to return to the home page.
 
 ---
 
