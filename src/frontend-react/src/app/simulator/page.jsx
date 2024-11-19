@@ -80,13 +80,13 @@ export default function SimulatorPage({ searchParams }) {
 
                 setChat(response.data);
                 setChatId(response.data["chat_id"]);
-                router.push('/salesmate?id=' + response.data["chat_id"]);
+                router.push('/simulator?id=' + response.data["chat_id"]);
             } catch (error) {
                 console.error('Error fetching chat:', error);
                 setChatIsTyping(false);
                 setChat(null);
                 setChatId(null);
-                router.push('/salesmate');
+                router.push('/simulator');
             }
         };
         startChat(message);
@@ -159,7 +159,7 @@ export default function SimulatorPage({ searchParams }) {
         <div className={styles.container}>
             <div className={styles.chatPanel}>
                 <div className={styles.chatHeader}>
-                    <div className={styles.logo} onClick={() => router.push('/landing')}>
+                    <div className={styles.logo} onClick={() => router.push('/')}>
                         SalesMate
                     </div>
                 </div>
