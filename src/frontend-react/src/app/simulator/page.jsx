@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, use, useEffect } from 'react';
+import { useState, use, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInput from '@/components/chat/ChatInput';
 import { Markdown, TypingIndicator } from '@/components/chat/ChatContent';
@@ -23,17 +23,16 @@ export default function SimulatorPage({ searchParams }) {
     const [ragIsLoading, setRagIsLoading] = useState(false);
     const router = useRouter();
 
-    const fetchChat = async (id) => {
+    const fetchChat = useCallback(async (id) => {
         try {
             setChat(null);
             const response = await DataService.GetChat(id);
             setChat(response.data);
-            console.log(chat);
         } catch (error) {
             console.error('Error fetching chat:', error);
             setChat(null);
         }
-    };
+    }, [setChat]);
 
     // Setup Component
     useEffect(() => {
@@ -42,7 +41,7 @@ export default function SimulatorPage({ searchParams }) {
         } else {
             setChat(null);
         }
-    }, [chat_id]);
+    }, [chat_id, fetchChat]);
 
     function tempChatMessage(message) {
         // Set temp values
