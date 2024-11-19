@@ -33,7 +33,7 @@ docker build -t sales-mate-api-service -f ./api_service/Dockerfile ./api_service
 # docker compose run --rm --service-ports $TARGET_IMAGE
 
 # Run all containers
-docker compose up --build --wait $DETACHED_MODE
+docker compose up --build -d
 
 # Attach to logs if not running in detached mode
 if [ -z "$DETACHED_MODE" ]; then
