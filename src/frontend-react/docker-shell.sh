@@ -3,6 +3,7 @@
 set -e
 
 export IMAGE_NAME="sales-mate-frontend-react"
+export DEV="1"
 
 # Build the image based on the Dockerfile
 docker build -t $IMAGE_NAME -f Dockerfile.dev .
