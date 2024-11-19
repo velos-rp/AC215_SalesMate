@@ -3,7 +3,7 @@ name: CI Multi-Container Test
 on:
   push:
     branches:
-      - main  # Triggers when code is pushed to any branch
+      - "*"  # Triggers when code is pushed to any branch
 
 jobs:
   test:
@@ -59,14 +59,18 @@ jobs:
       - name: Check code formatting with black
         continue-on-error: true
         run: black --check .
-
-      # Step 4: Run the Docker Test Script
+      
+      - name: Pre-create chat-history with permissions
+        run: |
+          sudo mkdir -p src/api_service/chat-history/gemini
+          sudo chmod -R 777 src/
+    
+      # Step 4: Run the Primary API Docker Test Script
       - name: Run Primary API Docker Tests
         run: |
           cd src
-          chmod +x ./docker-shell.sh
-          source docker-shell.sh -d
-          sleep 10
+          source docker-shell.sh
+          sleep 10s
 
           # Define the services to test
           services=("rag-copilot-pipeline" "sales-mate-api-service")
@@ -88,7 +92,7 @@ jobs:
 
           cd ..
 
-      # Step 5: Run the Docker Test Script
+      # Step 5: Run the Docker Test Script for finetuning
       - name: Run Finetunning tests
         run: |
           cd src/finetuning_pipeline

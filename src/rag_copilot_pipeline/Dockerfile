@@ -1,7 +1,7 @@
 # Use the official Debian-hosted Python image
 FROM python:3.12-slim-bookworm
 
-ARG DEBIAN_PACKAGES="build-essential git screen vim"
+ARG DEBIAN_PACKAGES="build-essential git screen vim curl"
 
 # Prevent apt from showing prompts
 ENV DEBIAN_FRONTEND=noninteractive

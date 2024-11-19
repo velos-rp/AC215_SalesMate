@@ -23,7 +23,7 @@ echo "Starting Docker containers and running tests..."
 
 # Start the containers in detached mode
 cd src
-source docker-shell.sh -d
+source docker-shell.sh
 
 # Wait for the containers to start
 sleep 10
