@@ -6,7 +6,7 @@ on:
       - "*"  # Triggers when code is pushed to any branch
 
 jobs:
-  test:
+  test-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -109,3 +109,28 @@ jobs:
           echo "All tests passed!"
 
           cd ..
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run linter
+      - name: Run linter
+        run: npm run lint
+
+      # Step 5: Run tests
+      - name: Run tests
+        run: npm run test
