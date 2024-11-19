@@ -3,8 +3,10 @@
 # exit immediately if a command exits with a non-zero status
 set -e
 
+echo "The current directory is: $(pwd)"
+
 # Read the settings file
-source ./env.dev
+source ../env.dev
 
 export IMAGE_NAME="gemini-finetuner"
 
@@ -12,10 +14,10 @@ export IMAGE_NAME="gemini-finetuner"
 docker build -t $IMAGE_NAME -f Dockerfile .
 
 # Run Container
-docker run --rm --name $IMAGE_NAME -ti \
+docker run --name $IMAGE_NAME -ti \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e GCS_BUCKET_NAME=$GCS_BUCKET_NAME \
-$IMAGE_NAME
+$IMAGE_NAME $1

@@ -9,9 +9,11 @@ verify_ssl = true
 user-agent = "*"
 requests = "*"
 google-cloud-storage = "*"
+google-cloud-translate = "*"
 google-generativeai = "*"
 google-cloud-aiplatform = ">=1.38"
 pandas = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.9"

@@ -28,15 +28,6 @@ repos:
           - --max-line-length=100  # Set your preferred line length
           - --ignore=E203,W503  # Ignore the E203 and W503 error
 
-  - repo: local
-    hooks:
-      - id: pytest-check
-        name: pytest-check
-        entry: pytest
-        language: system
-        pass_filenames: false
-        always_run: true
-
   # - repo: local
   #   hooks:
   #     - id: docker-compose-pytest
@@ -45,3 +36,12 @@ repos:
   #       language: system
   #       pass_filenames: false
   #       always_run: true
+
+  - repo: local
+    hooks:
+      - id: docker-compose-pytest
+        name: Run pytest in Docker container for finetuning
+        entry: .hooks/run_docker_tests_finetuning.sh
+        language: system
+        pass_filenames: false
+        always_run: true

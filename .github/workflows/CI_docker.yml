@@ -67,3 +67,21 @@ jobs:
           echo "All tests passed!"
 
           cd ..
+
+      # Step 4: Run the Docker Test Script
+      - name: Run Finetunning tests
+        run: |
+          cd src/finetuning_pipeline
+          source docker-shell.sh "pipenv run pytest" || {
+              echo "Tests failed. Aborting."
+              # Stop all containers (assuming they were started earlier)
+              docker ps -aq | xargs docker rm
+              exit 1
+            }
+
+          echo "Stopping all containers..."
+          docker ps -aq | xargs docker rm
+
+          echo "All tests passed!"
+
+          cd ..
