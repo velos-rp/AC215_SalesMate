@@ -9,7 +9,7 @@ import { formatRelativeTime } from "../services/Common";
 import styles from "./styles.module.css";
 
 
-export default function LandingPage() {
+export default function HomePage() {
     // Component States
     const [chats, setChats] = useState([]);
 
