@@ -82,8 +82,7 @@ jobs:
         
           # Run all containers
           docker compose up --build -d
-          timeout 1m docker compose logs -f
-          sleep 30s
+          sleep 10s
 
           # Define the services to test
           services=("rag-copilot-pipeline", "sales-mate-api-service")
