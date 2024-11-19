@@ -16,6 +16,7 @@
     align-items: center;
     padding-left: 8px;
     height: 65px;
+    flex-shrink: 0;
 }
 
 .logo {
@@ -29,8 +30,10 @@
     flex-direction: column;
     background-color: #f4f5f7;
     width: 100%;
-    height: calc(100vh - 34px - 30px);
+    height: calc(100vh);
+    flex-shrink: 1;
     padding: 20px 12px;
+    overflow-y: auto;
 }
 
 .promptHeader {
@@ -64,6 +67,7 @@
 .chatInputWrapper {
     background-color: #f4f5f7;
     padding: 0 8px;
+    flex-shrink: 0;
 }
 
 .chatInput {
@@ -109,7 +113,7 @@
     display: flex;
     flex-direction: column;
     background-color: #5f9ac6;
-    height: calc(100vh - 28px - 19px);
+    height: calc(100vh - 65px - 40px);
 }
 
 .ragBotMessage {
@@ -123,8 +127,6 @@
 .ragUserMessage {
     background-color: #fff;
     font-size: 18px;
-    min-height: 24px;
-    max-height: 400px;
     border-radius: 12px;
     border: #000 solid 2px;
     width: calc(100% - 40px);
