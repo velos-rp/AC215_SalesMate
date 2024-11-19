@@ -12,6 +12,8 @@ services:
             - ./frontend-react:/app
         environment:
             DEV: "0"
+        depends_on:
+            - sales-mate-api-service
     rag-copilot-pipeline:
         image: rag-copilot-pipeline
         container_name: rag-copilot-pipeline
