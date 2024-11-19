@@ -114,6 +114,7 @@
     flex-direction: column;
     background-color: #5f9ac6;
     height: calc(100vh - 65px - 40px);
+    overflow-y: auto;
 }
 
 .ragBotMessage {

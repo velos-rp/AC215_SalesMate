@@ -3,6 +3,17 @@ networks:
         name: sales-mate-network
         external: true
 services:
+    sales-mate-frontend-react:
+        image: sales-mate-frontend-react
+        container_name: sales-mate-frontend-react
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./frontend-react:/app
+        environment:
+            DEV: "0"
+        depends_on:
+            - sales-mate-api-service
     rag-copilot-pipeline:
         image: rag-copilot-pipeline
         container_name: rag-copilot-pipeline
