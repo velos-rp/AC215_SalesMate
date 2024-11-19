@@ -8,7 +8,8 @@ def test_direct_chat():
     session = requests.Session()
 
     # Define the base URL
-    BASE = "http://0.0.0.0:9000"
+    HOST = "sales-mate-api-service"
+    BASE = f"http://{HOST}:9000"
 
     # Set headers once for the session
     # make the session ID a uuid string
