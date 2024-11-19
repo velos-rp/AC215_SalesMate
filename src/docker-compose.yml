@@ -3,6 +3,17 @@ networks:
         name: sales-mate-network
         external: true
 services:
+    sales-mate-frontend-react:
+        image: sales-mate-frontend-react
+        build:
+            context: ./frontend-react
+            dockerfile: Dockerfile.dev
+        container_name: sales-mate-frontend-react
+        ports:
+            - "3000:3000"
+        volumes:
+            - .:/app
+        # command: bash -c "npm install && npm run dev"
     rag-copilot-pipeline:
         image: rag-copilot-pipeline
         container_name: rag-copilot-pipeline
