@@ -135,9 +135,19 @@ export default function SimulatorPage({ searchParams }) {
                 const response = await DataService.AskRagCopilot(message.content);
                 console.log(response.data);
 
+                const messageData = response.data.message?.copilot_response;
+                let content;
+
+                console.log(content, 'data', messageData)
+                if (typeof messageData[0] === 'string') {
+                    content = messageData[0];
+                } else {
+                    content = messageData.map((tuple) => (tuple.join('\n'))).join('\n');
+                }
+
                 const copilotMessage = {
                     role: 'assistant',
-                    content: response.data.message?.copilot_response?.[0],
+                    content,
                 };
 
                 // Hide typing indicator and add response
