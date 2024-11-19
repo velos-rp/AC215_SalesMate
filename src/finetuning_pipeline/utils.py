@@ -8,7 +8,7 @@ def generate_train_test(df):
     data = []
     for _, row in df.iterrows():
         # Parse the string as a list of dictionaries
-        if type(row) == str:
+        if type(row["transcription_translated"]) == str:
             conversation = ast.literal_eval(row["transcription_translated"])
         else:
             conversation = row["transcription_translated"]

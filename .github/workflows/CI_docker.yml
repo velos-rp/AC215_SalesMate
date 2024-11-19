@@ -31,13 +31,17 @@ jobs:
         env:
           GCP_KEY_COPILOT: ${{ secrets.GCP_KEY_COPILOT }}
           GCP_KEY_API: ${{ secrets.GCP_KEY_API }}
+          GCP_KEY_FINETUNING: ${{ secrets.GCP_KEY_FINETUNING }}
         run: |
           mkdir -p src/rag_copilot_pipeline/secrets
           mkdir -p src/api_service/secrets
+          mkdir -p src/finetuning_pipeline/secrets
           python -c "import os; open('src/rag_copilot_pipeline/secrets/gcp-key.json', 'w').write(os.getenv('GCP_KEY_COPILOT', ''))"
           python -c "import os; open('src/api_service/secrets/llm-service-account.json', 'w').write(os.getenv('GCP_KEY_API', ''))"
+          python -c "import os; open('src/finetuning_pipeline/secrets/llm-service-account.json', 'w').write(os.getenv('GCP_KEY_FINETUNING', ''))"
           jq empty src/rag_copilot_pipeline/secrets/gcp-key.json
           jq empty src/api_service/secrets/llm-service-account.json
+          jq empty src/finetuning_pipeline/secrets/llm-service-account.json
 
 
       # Step 4: Run the Docker Test Script
@@ -68,7 +72,7 @@ jobs:
 
           cd ..
 
-      # Step 4: Run the Docker Test Script
+      # Step 5: Run the Docker Test Script
       - name: Run Finetunning tests
         run: |
           cd src/finetuning_pipeline
