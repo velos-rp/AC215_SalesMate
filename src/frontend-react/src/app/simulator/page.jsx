@@ -13,7 +13,6 @@ import styles from "./styles.module.css";
 export default function SimulatorPage({ searchParams }) {
     const params = use(searchParams);
     const chat_id = params.id;
-    const model = params.model || 'llm';
 
     // Component States
     const [chatId, setChatId] = useState(params.id);
@@ -27,7 +26,7 @@ export default function SimulatorPage({ searchParams }) {
     const fetchChat = async (id) => {
         try {
             setChat(null);
-            const response = await DataService.GetChat(model, id);
+            const response = await DataService.GetChat(id);
             setChat(response.data);
             console.log(chat);
         } catch (error) {
@@ -72,7 +71,7 @@ export default function SimulatorPage({ searchParams }) {
                 setChat(tempChatMessage(message)); // Show the user input message while LLM is invoked
 
                 // Submit chat
-                const response = await DataService.StartChatWithLLM(model, message);
+                const response = await DataService.StartChatWithLLM(message);
                 console.log(response.data);
 
                 // Hide typing indicator and add response
@@ -103,7 +102,7 @@ export default function SimulatorPage({ searchParams }) {
                 tempChatMessage(message);
 
                 // Submit chat
-                const response = await DataService.ContinueChatWithLLM(model, id, message);
+                const response = await DataService.ContinueChatWithLLM(id, message);
                 console.log(response.data);
 
                 // Hide typing indicator and add response

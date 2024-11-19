@@ -20,16 +20,16 @@ const DataService = {
     Init: function () {
         // Any application initialization logic comes here
     },
-    GetChats: async function (model, limit) {
+    GetChats: async function (limit) {
         return await api.get(BASE_API_URL + "/direct-chat/chats?limit=" + limit);
     },
-    GetChat: async function (model, chat_id) {
+    GetChat: async function (chat_id) {
         return await api.get(BASE_API_URL + "/direct-chat/chats/" + chat_id);
     },
-    StartChatWithLLM: async function (model, message) {
+    StartChatWithLLM: async function (message) {
         return await api.post(BASE_API_URL + "/direct-chat/chats/", message);
     },
-    ContinueChatWithLLM: async function (model, chat_id, message) {
+    ContinueChatWithLLM: async function (chat_id, message) {
         return await api.post(BASE_API_URL + "/direct-chat/chats/" + chat_id, message);
     },
     AskRagCopilot: async function (query) {

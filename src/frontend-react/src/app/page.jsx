@@ -19,7 +19,7 @@ export default function LandingPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await DataService.GetChats(null, 20);
+                const response = await DataService.GetChats(20);
                 setChats(response.data);
             } catch (error) {
                 console.error('Error fetching chats:', error);
