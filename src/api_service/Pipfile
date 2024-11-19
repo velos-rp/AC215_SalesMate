@@ -19,6 +19,7 @@ langchain-google-vertexai = "*"
 jupyterlab = "*"
 ipympl = "*"
 notebook = "*"
+pytest = "*"
 
 [dev-packages]
 

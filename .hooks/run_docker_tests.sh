@@ -29,7 +29,8 @@ source docker-shell.sh -d
 sleep 10
 
 # Define the services to test
-services=("rag-copilot-pipeline")
+# add 'sales-mate-api-service'
+services=("rag-copilot-pipeline" "sales-mate-api-service")
 
 # Run pytest in each container
 for service in "${services[@]}"; do
