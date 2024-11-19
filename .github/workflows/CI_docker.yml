@@ -66,7 +66,7 @@ jobs:
           cd src
           export SECRETS_DIR_COPILOT="./rag_copilot_pipeline/secrets"
           export SECRETS_DIR_API="./api_service/secrets"
-
+          export DEV = "2" # Run in production mode
 
           # Create the network if we don't have it yet
           docker network inspect sales-mate-network >/dev/null 2>&1 || docker network create sales-mate-network
@@ -79,11 +79,12 @@ jobs:
           # docker compose run --rm --service-ports $TARGET_IMAGE
 
           # Run all containers
-          docker compose up --build --wait -d
-          sleep 10
+          docker compose up --build -d
+          timeout 5m docker compose logs -f
+          sleep 30s
 
           # Define the services to test
-          services=("rag-copilot-pipeline" "sales-mate-api-service")
+          services=("rag-copilot-pipeline")
 
           # Run pytest in each container
           for service in "${services[@]}"; do

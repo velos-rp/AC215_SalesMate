@@ -14,7 +14,7 @@ services:
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
             GCP_PROJECT: "ac-215-436117"
-            DEV: "0" # Change to 0 for running web server
+            DEV: "${DEV}" # Change to 0 for running web server
         healthcheck:
             test: ["CMD", "curl", "-f", "http://rag-copilot-pipeline:8081/"]
             interval: 60s
@@ -34,7 +34,7 @@ services:
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/llm-service-account.json"
             GCP_PROJECT: "project-id-3187519002330642642"
-            DEV: "0" # Change to 0 for running web server
+            DEV: ${DEV} # Change to 0 for running web server
             FINETUNED_MODEL: "1" # Toggle for using finetuned model or not
         healthcheck:
             test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9000/"]
