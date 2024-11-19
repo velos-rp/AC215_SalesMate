@@ -17,9 +17,9 @@ services:
             DEV: "0" # Change to 0 for running web server
         healthcheck:
             test: ["CMD", "curl", "-f", "http://rag-copilot-pipeline:8081/"]
-            interval: 10s
+            interval: 60s
             timeout: 5s
-            retries: 15
+            retries: 30
             start_period: 30s
         depends_on:
             - chromadb
@@ -38,9 +38,9 @@ services:
             FINETUNED_MODEL: "1" # Toggle for using finetuned model or not
         healthcheck:
             test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9000/"]
-            interval: 10s
+            interval: 60s
             timeout: 5s
-            retries: 15
+            retries: 30
             start_period: 30s
         depends_on:
             - rag-copilot-pipeline

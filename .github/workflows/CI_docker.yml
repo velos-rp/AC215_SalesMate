@@ -64,9 +64,23 @@ jobs:
       - name: Run Primary API Docker Tests
         run: |
           cd src
-          chmod +x ./docker-shell.sh
-          source docker-shell.sh
-          sleep 500
+          export SECRETS_DIR_COPILOT="./rag_copilot_pipeline/secrets"
+          export SECRETS_DIR_API="./api_service/secrets"
+
+
+          # Create the network if we don't have it yet
+          docker network inspect sales-mate-network >/dev/null 2>&1 || docker network create sales-mate-network
+
+          # Build the image based on the Dockerfile
+          docker build -t rag-copilot-pipeline -f ./rag_copilot_pipeline/Dockerfile ./rag_copilot_pipeline/
+          docker build -t sales-mate-api-service -f ./api_service/Dockerfile ./api_service/
+
+          # Run docker compose targeting one container
+          # docker compose run --rm --service-ports $TARGET_IMAGE
+
+          # Run all containers
+          docker compose up --build --wait -d
+          sleep 10
 
           # Define the services to test
           services=("rag-copilot-pipeline" "sales-mate-api-service")
@@ -88,7 +102,7 @@ jobs:
 
           cd ..
 
-      # Step 5: Run the Docker Test Script
+      # Step 5: Run the Docker Test Script for finetuning
       - name: Run Finetunning tests
         run: |
           cd src/finetuning_pipeline
