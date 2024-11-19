@@ -1,0 +1,60 @@
+.chatInputContainer {
+    padding: 4px;
+}
+
+.textareaWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.chatInput {
+    width: 100%;
+    background: #fff;
+    border: none;
+    color: #000;
+    font-size: 18px;
+    padding: 10px;
+    padding-right: 50px;
+    border-radius: 12px;
+    border: #000 solid 2px;
+    /* Make room for submit button */
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    min-height: 24px;
+    max-height: 400px;
+    /* Optional: set a max height if desired */
+    overflow-y: hidden;
+    /* Hide scrollbar as we're auto-expanding */
+    line-height: 1.5;
+}
+
+.submitButton {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.submitButton.active {
+    color: #fff;
+    background-color: #145da0;;
+}
+
+.submitButton.active:hover {
+    transform: scale(1.05);
+}
+
+.submitButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
