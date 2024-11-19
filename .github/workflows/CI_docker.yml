@@ -61,7 +61,7 @@ jobs:
         run: black --check .
 
       # Step 4: Run the Docker Test Script
-      - name: Run Docker Tests
+      - name: Run Primary API Docker Tests
         run: |
           cd src
           chmod +x ./docker-shell.sh
@@ -69,7 +69,7 @@ jobs:
           sleep 10
 
           # Define the services to test
-          services=("rag-copilot-pipeline")
+          services=("rag-copilot-pipeline" "sales-mate-api-service")
 
           # Run pytest in each container
           for service in "${services[@]}"; do
