@@ -3,7 +3,7 @@ name: CI Multi-Container Test
 on:
   push:
     branches:
-      - main  # Triggers when code is pushed to any branch
+      - "*"  # Triggers when code is pushed to any branch
 
 jobs:
   test:
