@@ -13,10 +13,8 @@ To run these tests, we use the action workflows with configurations located in t
 - `src/rag_copilot_pipeline/tests/test_vector_store.py` Another test tests the main functionalities of the vector database class by creating a toy collection, writing data to it, and querying it.
 
 #### Finetuning Pipeline
-
-- `src/rag_copilot_pipeline/tests/test_preprocessing.py` We have one test that on the preprocessing workflow tha tests the chunking functionality of the pipeline.
-- `src/rag_copilot_pipeline/tests/test_vector_store.py` Another test tests the main functionalities of the vector database class by creating a toy collection, writing data to it, and querying it.
-
+- `src/rag_copilot_pipeline/tests/test_vector_store.py: test_processing_pipeline` Runs the end-to-end data processing pipeline for preparing the data for the fine-tuning model. It uses a sample of only 4 rows of the original dataset to speed-up test
+- `src/finetuning_pipeline/tests/test_finetuning.py: test_generate_train_test` Tests specifically the generate_train_test step with all the data that was used to train the model.
 
 
 ### Local Testing Workflow
