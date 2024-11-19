@@ -65,8 +65,8 @@ jobs:
         run: |
           cd src
           chmod +x ./docker-shell.sh
-          source docker-shell.sh -d
-          sleep 240
+          source docker-shell.sh
+          sleep 500
 
           # Define the services to test
           services=("rag-copilot-pipeline" "sales-mate-api-service")
