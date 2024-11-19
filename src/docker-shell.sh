@@ -14,9 +14,6 @@ docker network inspect sales-mate-network >/dev/null 2>&1 || docker network crea
 docker build -t rag-copilot-pipeline -f ./rag_copilot_pipeline/Dockerfile ./rag_copilot_pipeline/
 docker build -t sales-mate-api-service -f ./api_service/Dockerfile ./api_service/
 
-# Run docker compose targeting one container
-# docker compose run --rm --service-ports $TARGET_IMAGE
-
 # Run all containers
 docker compose up --build -d
 

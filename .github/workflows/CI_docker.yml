@@ -59,8 +59,13 @@ jobs:
       - name: Check code formatting with black
         continue-on-error: true
         run: black --check .
-
-      # Step 4: Run the Docker Test Script
+      
+      - name: Pre-create chat-history with permissions
+        run: |
+          sudo mkdir -p src/api_service/chat-history/gemini
+          sudo chmod -R 777 src/api_service/chat-history/gemini
+    
+      # Step 4: Run the Primary API Docker Test Script
       - name: Run Primary API Docker Tests
         run: |
           cd src
@@ -74,17 +79,14 @@ jobs:
           # Build the image based on the Dockerfile
           docker build -t rag-copilot-pipeline -f ./rag_copilot_pipeline/Dockerfile ./rag_copilot_pipeline/
           docker build -t sales-mate-api-service -f ./api_service/Dockerfile ./api_service/
-
-          # Run docker compose targeting one container
-          # docker compose run --rm --service-ports $TARGET_IMAGE
-
+        
           # Run all containers
           docker compose up --build -d
-          timeout 5m docker compose logs -f
+          timeout 1m docker compose logs -f
           sleep 30s
 
           # Define the services to test
-          services=("rag-copilot-pipeline")
+          services=("rag-copilot-pipeline", "sales-mate-api-service")
 
           # Run pytest in each container
           for service in "${services[@]}"; do
