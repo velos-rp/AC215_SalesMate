@@ -6,7 +6,7 @@
     "dev": "WATCHPACK_POLLING=true next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --config .eslintrc.json",
+    "lint": "next lint",
     "test": "jest"
   },
   "dependencies": {
