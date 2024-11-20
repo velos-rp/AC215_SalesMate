@@ -17,13 +17,34 @@ We made extensive progress in extending the CLI processes from Milestone2 into a
 - Created a primary backend api container (api_service) that is meant to communicate with the rag_copilot_pipeline and make calls to the LLM model (in this case, a finetuned Gemini endpoint). 
 - Added both local and server side testing suite (read more in our testing documentation in the reports folder)
 - Container Orchestration: modified the docker compose file to launch and run the containers needed for the web app (chromadb, rag_copilot_pipeline, api_service, and frontend-react).
+- Documentation: Inside the reports folder there is the testing documentation as well as the diagrams from the app. Inside each of the containers folders we have further detailed the READMEs
+- Data: the fintuning pipeline reads from and saves to GCP bucket, but we also added a sample of input and output data from the data processing pipeline in the data folder of this repo as a reference.
 
+### Overall architecture
 
-## Directions to run web app (spin up full-stack containers) ##
+1. Fine-tuning container
+This container is used solely at the time of training the model. It process the required data, trains a VertexAI model and host it on GCP. For more info on it see src/finetuning_pipeline/README
+
+2. Web application - backend
+This is a combination of three containers that are orchestrated by the docker-compose.yml file located in the src/ folder. Those containers are:
+- api_service container that sends all information to the frontend. It sends and receivs data from the LLM model hosted on GCP, that simulates a customer, as well as the rag container, that serves as a copilot for the seller
+- rag_copilot_pipeline that serves as copilot for the seller, answering all questions they might have
+- chromadb that hosts a vector database with the knowledge base of the copilot
+More info on src/api_service/README and src/rag_copilot_pipeline/README.
+
+3. Web application - frontend
+Frontend built on react that connects to the api_service backend container. More info on src/frontend-react/README.
+
+### Directions to run fine-tuning pipeline ##
+1. ``cd src``. Ensure that you have placed llm-service-account.json keys in the ``./finetuning_pipeline/secrets`` directory 
+2. ``source docker-shell.sh "pipenv run python cli.py --process_data --data_path ac215_salesmate/data/extract_calls_pt.csv --train"``, this will process data, save it in a GCP bucket, train a model using VertexAI and host it on GCP. 
+
+### Directions to run web app (spin up full-stack containers) ##
 1. ``cd src``. Ensure that you have placed gc-key.json keys in the ``./api_service/secrets`` directory and ``./rag_copilot_pipeline/secrets`` directory, follow the naming in the docker compose file.
 2. ``source docker-shell.sh``, this will launch the chromadb, rag_copilot_pipeline, api_service, and frontend-react containers.
 3. If you'd like logs for the containers, run ``docker compose logs -f``
 4. To go to the web app, navigate to ``http://localhost:3000`` on your browser.
+
 
 ## Milestone2 ##
 
