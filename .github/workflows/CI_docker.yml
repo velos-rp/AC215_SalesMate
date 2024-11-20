@@ -125,12 +125,15 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install dependencies
+        working-directory: src/frontend-react
         run: npm install
 
       # Step 4: Run linter
       - name: Run linter
+        working-directory: src/frontend-react
         run: npm run lint
 
       # Step 5: Run tests
       - name: Run tests
+        working-directory: src/frontend-react
         run: npm run test
