@@ -5,7 +5,6 @@
 /secrets
 .vscode
 /limited-sample-data
-/sample-data
 
 .ipynb_checkpoints/
 

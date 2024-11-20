@@ -7,6 +7,7 @@ The main purpose of the rag-copilot-pipeline is to provide the user (customer sa
 - Created a FastAPI server for the rag_copilot_pipeline that spins up and directs queries to the `sales_copilot.py` module to get a set of read queries and insights that will help the customer sales representative answer a customer's questions. This FastAPI server spins up on port 8081 and is accessible from the container network. It is meant for communication with the primary `api_service` container but can also be accessed from the host machine. 
 - Added the `rag_cli_llama.py` module which is a replica of the `rag_cli.py` module for the LlamaIndexDB vector store implementation.
 - Added unit tests for the chunking and vector store processes, see the testing deocumentation in the `reports/testing_documentation/testing.md` file for more details.
+- Added sample pdfs currently used in the vector database to the repo, see the `sample-data` folder for this data.
 
 We have initially utilized the Vertex AI `text-embedding-004` embeddings for processing text chunks and provide the CLI user the option to chunk based on the three options discussed in class: character splitting, recursive splitting, and semantic chunking.
 
