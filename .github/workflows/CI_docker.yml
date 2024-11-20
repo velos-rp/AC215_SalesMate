@@ -128,15 +128,10 @@ jobs:
         working-directory: src/frontend-react
         run: npm install
 
-      # Step 4: Debug linter rules
-      - name: Debug linter rules
-        working-directory: src/frontend-react
-        run: npx eslint . --debug
-
       # Step 4: Run linter
       - name: Run linter
         working-directory: src/frontend-react
-        run: npm run lint || true
+        run: next lint --config .eslintrc.json || true
         continue-on-error: true
 
       # Step 5: Run tests
