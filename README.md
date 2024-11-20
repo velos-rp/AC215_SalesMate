@@ -1,4 +1,4 @@
-﻿# AC215 - Milestone2 - SalesMate
+﻿# AC215 - Milestone3 - SalesMate
 
 **Team Members**
 Rafael Hoffmann Fallgatter, Rajiv Swamy and Vincent Huang
@@ -7,8 +7,23 @@ Rafael Hoffmann Fallgatter, Rajiv Swamy and Vincent Huang
 SalesMate
 
 **Project**
-The objective of this project is to develop a simulation of a sales chat where the AI plays the role of a client and the user must make a sale as a means of practice sales skills. More specifically, it will simulate a situation where the user is offering financial services. This was chosen since we have a dataset of past calls in this situation. 
-The app will be a chat interface where the AI answers using a model fine-tuned in real sales conversations. Moreover, the app will also have a copilot, which gives recommendation to the seller of how to answer to technical questions by having access to a knowledge base of pdfs of finance documents using RAG. 
+The objective of this project is to develop a simulation of a sales chat where the AI plays the role of a client and the user must make a sale as a means of practice sales skills. More specifically, it will simulate a situation where the user is offering financial services. This was chosen since we have a dataset of past calls in this situation.
+The app will be a chat interface where the AI answers using a model fine-tuned in real sales conversations. Moreover, the app will also have a copilot, which gives recommendation to the seller of how to answer to technical questions by having access to a knowledge base of pdfs of finance documents using RAG.
+
+## Milestone3 Updates##
+We made extensive progress in extending the CLI processes from Milestone2 into a full-stack web application. Here are the big updates for the work in Milestone3:
+- Added functionality to the rag_copilot_pipeline so that it can communicate insights through a HTTP interface with FastAPI
+- Created a front-end-react container that enables users to interact with our application from their browser, both the customer simulator and copilot are accessible with our frontend protoype.
+- Created a primary backend api container (api_service) that is meant to communicate with the rag_copilot_pipeline and make calls to the LLM model (in this case, a finetuned Gemini endpoint). 
+- Added both local and server side testing suite (read more in our testing documentation in the reports folder)
+- Container Orchestration: modified the docker compose file to launch and run the containers needed for the web app (chromadb, rag_copilot_pipeline, api_service, and frontend-react).
+
+
+## Directions to run web app (spin up full-stack containers) ##
+1. ``cd src``
+2. ``source docker-shell.sh``, this will launch the chromadb, rag_copilot_pipeline, api_service, and frontend-react containers.
+3. If you'd like logs for the containers, run ``docker compose logs -f``
+4. To go to the web app, navigate to ``http://localhost:3000`` on your browser.
 
 ## Milestone2 ##
 
