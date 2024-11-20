@@ -5,8 +5,8 @@ import ClientSessionProvider from '@/components/auth/ClientSessionProvider';
 import SessionInit from '@/components/auth/SessionInit';
 
 export const metadata = {
-    title: 'Formaggio',
-    description: 'Discover the world of cheese through AI',
+    title: 'SalesMate',
+    description: 'The future of sales training',
 }
 
 export default async function RootLayout({ children }) {
