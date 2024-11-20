@@ -20,7 +20,7 @@ We made extensive progress in extending the CLI processes from Milestone2 into a
 
 
 ## Directions to run web app (spin up full-stack containers) ##
-1. ``cd src``
+1. ``cd src``. Ensure that you have placed gc-key.json keys in the ``./api_service/secrets`` directory and ``./rag_copilot_pipeline/secrets`` directory, follow the naming in the docker compose file.
 2. ``source docker-shell.sh``, this will launch the chromadb, rag_copilot_pipeline, api_service, and frontend-react containers.
 3. If you'd like logs for the containers, run ``docker compose logs -f``
 4. To go to the web app, navigate to ``http://localhost:3000`` on your browser.
