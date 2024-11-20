@@ -131,7 +131,7 @@ jobs:
       # Step 4: Run linter
       - name: Run linter
         working-directory: src/frontend-react
-        run: next lint --config .eslintrc.json || true
+        run: npm run lint || true
         continue-on-error: true
 
       # Step 5: Run tests
