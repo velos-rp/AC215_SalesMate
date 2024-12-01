@@ -41,14 +41,14 @@ services:
             - ${SECRETS_DIR_API}:/secrets
             - ./api_service:/app
         ports:
-            - 9000:9000 # Expose the FastAPI port to host
+            - 9876:9876 # Expose the FastAPI port to host
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/llm-service-account.json"
             GCP_PROJECT: "project-id-3187519002330642642"
             DEV: ${DEV} # Change to 0 for running web server
             FINETUNED_MODEL: "1" # Toggle for using finetuned model or not
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9000/"]
+            test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9876/"]
             interval: 30s
             timeout: 5s
             retries: 5

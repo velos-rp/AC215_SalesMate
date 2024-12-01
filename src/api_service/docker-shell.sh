@@ -17,7 +17,9 @@ docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .
 docker run --rm --name $IMAGE_NAME -ti \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
--p 9000:9000 \
--e DEV=1 \
+-p 9876:9876 \
+-e DEV=0 \
 -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-key.json \
+-e GCP_PROJECT=project-id-3187519002330642642 \
+-e FINETUNED_MODEL=1 \
 $IMAGE_NAME
