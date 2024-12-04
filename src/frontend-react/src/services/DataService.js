@@ -33,7 +33,7 @@ const DataService = {
         return await api.post(BASE_API_URL + "/direct-chat/chats/" + chat_id, message);
     },
     AskRagCopilot: async function (query) {
-        return await api.get(BASE_API_URL + "/rag-copilot", { params: { input: query } });
+        return await api.get(BASE_API_URL + "/rag-copilot/insights", { params: { input: query } });
     },
 }
 
