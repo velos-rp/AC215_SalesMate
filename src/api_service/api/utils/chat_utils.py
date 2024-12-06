@@ -4,12 +4,14 @@ import os
 import traceback
 from typing import Dict, List, Optional
 
+persistent_dir = "/persistent"
+
 
 class ChatHistoryManager:
     def __init__(self, model, history_dir: str = "chat-history"):
         """Initialize the chat history manager with the specified directory"""
         self.model = model
-        self.history_dir = os.path.join(history_dir, model)
+        self.history_dir = os.path.join(persistent_dir,history_dir, model)
         self._ensure_directories()
 
     def _ensure_directories(self) -> None:
