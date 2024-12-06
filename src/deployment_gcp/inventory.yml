@@ -1,0 +1,24 @@
+all:
+    vars:
+      ansible_user: sa_105694336831168688433
+      ansible_ssh_private_key_file: "../../secrets/ssh-key-deployment"
+      artifact_registry_location: "us-docker.pkg.dev"
+      artifact_registry_repository: "sales-mate-v1"
+      gcp_service_account_file: "../../secrets/deployment-shared.json"
+      gcp_service_account_email: "gcp-deployment@sales-mate-443815.iam.gserviceaccount.com"
+      gcp_auth_kind: "serviceaccount"
+      gcp_scopes: "https://www.googleapis.com/auth/compute"
+      gcp_project: "sales-mate-443815"
+      gcp_region: "us-east1"
+      gcp_zone: "us-east1-c"
+      docker_network_name: "sales-mate-network"
+      persistent_disk_name: "sales-mate-demo-disk"
+      persistent_disk_size: 50
+      machine_instance_name: "sales-mate-deploy"
+      machine_type: "n2d-standard-2"
+      machine_disk_size: 50
+
+    children:
+        appserver:
+            hosts:
+                35.237.0.242:

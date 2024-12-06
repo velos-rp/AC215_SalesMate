@@ -1,0 +1,58 @@
+---
+- name: "Build docker images and push them to GCR"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: "Get timestamp for docker tag"
+    shell: "(date +%Y%m%d%H%M%S)"
+    register: tag
+  - name: Print tag
+    debug:
+      var: tag
+  - name: Build frontend container image
+    community.general.docker_image:
+      build:
+        path: /frontend-react
+        platform: linux/amd64/v2
+        dockerfile: Dockerfile
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-frontend-react:{{ tag.stdout}}"
+      source: build
+  - name: Push frontend image to GCR
+    community.general.docker_image:
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-frontend-react:{{ tag.stdout}}"
+      repository: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-frontend-react:{{ tag.stdout}}"
+      push: yes
+      source: local
+  - name: Build api-service container image
+    community.general.docker_image:
+      build:
+        path: /api_service
+        platform: linux/amd64/v2
+        dockerfile: Dockerfile  # Optional, specify if not using the default Dockerfile
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-api-service:{{ tag.stdout }}"
+      source: build
+  - name: Push api-service image to Artifact Registry
+    community.general.docker_image:
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-api-service:{{ tag.stdout }}"
+      repository: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-api-service:{{ tag.stdout }}"
+      push: yes
+      source: local
+
+  - name: Build rag_copilot_pipeline container image
+    community.general.docker_image:
+      build:
+        path: /rag_copilot_pipeline
+        platform: linux/amd64/v2
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-rag-copilot-pipeline:{{ tag.stdout}}"
+      source: build
+  - name: Push rag_copilot_pipeline image to GCR
+    community.general.docker_image:
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-rag-copilot-pipeline:{{ tag.stdout}}"
+      repository: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-rag-copilot-pipeline:{{ tag.stdout}}"
+      push: yes
+      source: local
+      timeout: 600
+  - name: "Save docker tag"
+    shell: echo {{ tag.stdout}} > .docker-tag
+  - name: "Remove all unused containers"
+    shell: docker system prune -a
