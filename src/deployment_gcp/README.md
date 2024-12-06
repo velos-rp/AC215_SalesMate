@@ -13,7 +13,7 @@ Make sure that you have the following files in a `secrets` subfolder at this dir
 #### Run `deployment` container
 - cd into `deployment`
 - Go into `docker-shell.sh` and change `GCP_PROJECT` to your project id
-- Run `sh docker-shell.sh` 
+- Run `sh docker-shell.sh`
 - make sure that GCP authentication works, run `gcloud auth list`
 
 
@@ -37,7 +37,7 @@ cd /app
 ```
 gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub
 ```
-From the output of the above command keep note of the username and place it in the `ansible_user` variable in the `inventory.yml` file. Here is a snippet of the output 
+From the output of the above command keep note of the username and place it in the `ansible_user` variable in the `inventory.yml` file. Here is a snippet of the output
 ```
 - accountId: ac215-project
     gid: '3906553998'
@@ -82,7 +82,4 @@ ansible-playbook deploy-setup-containers.yml -i inventory.yml
 ```
 ansible-playbook deploy-setup-webserver.yml -i inventory.yml
 ```
-Once the command runs go to `http://<External IP>/` 
-
-
-
+Once the command runs go to `http://<External IP>/`
