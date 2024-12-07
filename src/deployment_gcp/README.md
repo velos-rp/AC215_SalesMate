@@ -56,7 +56,7 @@ The username is `sa_100110341521630214262`
 
 First make sure that the setup is complete and enter the shell of the deployment container (by running `sh docker-shell.sh`).
 
-#### Build and Push Docker Containers to GCR (Google Container Registry)
+#### Build and Push Docker Containers to GCR (Google Artifact Registry)
 ```
 ansible-playbook deploy-docker-images.yml -i inventory.yml
 ```
@@ -83,3 +83,16 @@ ansible-playbook deploy-setup-containers.yml -i inventory.yml
 ansible-playbook deploy-setup-webserver.yml -i inventory.yml
 ```
 Once the command runs go to `http://<External IP>/`
+
+
+## Deployment: Kubernetes
+
+#### Build and Push Docker Containers to GCR (Google Artifact Registry), do this if not already done
+```
+ansible-playbook deploy-docker-images.yml -i inventory.yml
+```
+
+#### Create & Deploy Cluster
+```
+ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+```
