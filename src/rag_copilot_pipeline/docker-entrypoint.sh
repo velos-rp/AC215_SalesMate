@@ -25,6 +25,8 @@ if [ "${DEV}" = "1" ]; then
   pipenv shell
 elif [ "${DEV}" = "2" ]; then
   uvicorn_server_production
+elif [ "${DEV}" = "3" ]; then
+  pipenv run rag_cli_llama.py load --collection_name "investment-management" --input_dir sample-data
 else
   uvicorn_server
 fi

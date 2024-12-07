@@ -40,6 +40,7 @@ services:
         volumes:
             - ${SECRETS_DIR_API}:/secrets
             - ./api_service:/app
+            - ./api_service:/persistent
         ports:
             - 9876:9876 # Expose the FastAPI port to host
         environment:
@@ -47,6 +48,7 @@ services:
             GCP_PROJECT: "project-id-3187519002330642642"
             DEV: ${DEV} # Change to 0 for running web server
             FINETUNED_MODEL: "1" # Toggle for using finetuned model or not
+            RAG_COLLECTION_NAME: "investment-management"
         healthcheck:
             test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9876/"]
             interval: 30s

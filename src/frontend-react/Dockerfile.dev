@@ -10,4 +10,9 @@ EXPOSE 3000
 # Switch to app
 WORKDIR /app
 
+# Copy source code from subdirectory to the repo
+COPY . /app
+
+ENV NEXTAUTH_SECRET="gM/LozbzUACE7cDIOI5+QGg/xlRUA5qUa3x0ce+6OVNA="
+
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]

@@ -1,12 +1,13 @@
 import requests
 from fastapi import APIRouter, HTTPException
+import os
 
 router = APIRouter()
 
 
 RAG_COPILOT_HOST = "rag-copilot-pipeline"
 RAG_COPILOT_PORT = 8081
-COLLECTION_NAME = "investment-management"
+COLLECTION_NAME = os.getenv("RAG_COLLECTION_NAME", default="investment-management")
 BASE_URL = f"http://{RAG_COPILOT_HOST}:{RAG_COPILOT_PORT}"
 
 

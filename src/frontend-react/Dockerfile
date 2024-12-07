@@ -30,5 +30,7 @@ RUN npm ci --only=production
 # Expose the listening port
 EXPOSE 3000
 
+ENV NEXTAUTH_SECRET="gM/LozbzUACE7cDIOI5+QGg/xlRUA5qUa3x0ce+6OVNA="
+
 # Run the Next.js app
 CMD ["npm", "start"]
