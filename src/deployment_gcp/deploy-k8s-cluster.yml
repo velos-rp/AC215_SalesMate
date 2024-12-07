@@ -4,7 +4,7 @@
   gather_facts: false
 
   vars:
-    cluster_name: "cheese-app-cluster"
+    cluster_name: "sales-mate-cluster"
     machine_type: "n2d-standard-2"
     machine_disk_size: 30
     initial_node_count: 2
@@ -131,7 +131,7 @@
               storage: 10Gi
     when: cluster_state == "present"
   
-  - name: Importing credentials as a Secret
+  - name: Importing credentials as a Secret - General GCP Service
     shell: |
       #!/bin/bash
       kubectl create secret generic gcp-service-key --from-file=gcp-service.json=../secrets/gcp-service.json --namespace="{{cluster_name}}-namespace"
@@ -144,6 +144,19 @@
       var: create_secret_op
     when: cluster_state == "present"
   
+  - name: Importing credentials as a Secret - Finetuned LLM GCP Service
+    shell: |
+      #!/bin/bash
+      kubectl create secret generic llm-service-key --from-file=llm-service.json=../secrets/llm-service-account.json --namespace="{{cluster_name}}-namespace"
+    register: create_secret_op2
+    ignore_errors: yes
+    when: cluster_state == "present"
+  
+  - name: "Print Create Secret Output"
+    debug:
+      var: create_secret_op2
+    when: cluster_state == "present"
+  
   - name: "Create Deployment for Frontend"
     k8s:
       state: present
@@ -151,21 +164,21 @@
         apiVersion: v1
         kind: Deployment
         metadata:
-          name: frontend
+          name: sales-mate-frontend-react
           namespace: "{{cluster_name}}-namespace"
         spec:
           selector:
             matchLabels:
-              run: frontend
+              run: sales-mate-frontend-react
           template:
             metadata:
               labels:
-                run: frontend
+                run: sales-mate-frontend-react
             spec:
               containers:
-              - image: "gcr.io/{{ gcp_project }}/cheese-app-frontend-react:{{ tag.stdout}}"
+              - image: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-frontend-react:{{ tag.stdout }}"
                 imagePullPolicy: IfNotPresent
-                name: frontend
+                name: sales-mate-frontend-react
                 ports:
                 - containerPort: 3000
                   protocol: TCP
@@ -178,20 +191,20 @@
         apiVersion: v1
         kind: Deployment
         metadata:
-          name: vector-db
+          name: llm-rag-chromadb
           namespace: "{{cluster_name}}-namespace"
         spec:
           selector:
             matchLabels:
-              run: vector-db
+              run: llm-rag-chromadb
           template:
             metadata:
               labels:
-                run: vector-db
+                run: llm-rag-chromadb
             spec:
               containers:
-              - name: vector-db
-                image: chromadb/chroma:0.5.6
+              - name: llm-rag-chromadb
+                image: chromadb/chroma:0.5.18
                 ports:
                 - containerPort: 8000
                   protocol: TCP
@@ -200,6 +213,8 @@
                   value: "TRUE"
                 - name: ANONYMIZED_TELEMETRY
                   value: "FALSE"
+                - name: CHROMA_SERVER_CORS_ALLOW_ORIGINS
+                  value: '["*"]'
               #   volumeMounts:
               #   - name: chromadb-storage
               #     mountPath: /chroma/chroma
@@ -216,16 +231,65 @@
         apiVersion: v1
         kind: Deployment
         metadata:
-          name: api
+          name: sales-mate-api-service
           namespace: "{{cluster_name}}-namespace"
         spec:
           selector:
             matchLabels:
-              run: api
+              run: sales-mate-api-service
           template:
             metadata:
               labels:
-                run: api
+                run: sales-mate-api-service
+            spec:
+              volumes:
+                - name: persistent-vol
+                  emptyDir: {}
+                - name: google-cloud-key
+                  secret:
+                    secretName: llm-service-key
+              containers:
+              - image: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-api-service:{{ tag.stdout }}"
+                imagePullPolicy: IfNotPresent
+                name: sales-mate-api-service
+                ports:
+                - containerPort: 9876
+                  protocol: TCP
+                volumeMounts:
+                  - name: persistent-vol
+                    mountPath: /persistent
+                  - name: google-cloud-key
+                    mountPath: /secrets
+                env:
+                  - name: GOOGLE_APPLICATION_CREDENTIALS
+                    value: /secrets/llm-service-account.json
+                  - name: GCP_PROJECT
+                    value: "project-id-3187519002330642642"
+                  - name: DEV
+                    value: "0"
+                  - name: FINETUNED_MODEL
+                    value: "1"
+                  - name: RAG_COLLECTION_NAME
+                    value: "investment-management"
+    when: cluster_state == "present"
+  
+  - name: "Create Deployment for RAG Copilot Pipeline"
+    k8s:
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Deployment
+        metadata:
+          name: rag-copilot-pipeline
+          namespace: "{{cluster_name}}-namespace"
+        spec:
+          selector:
+            matchLabels:
+              run: rag-copilot-pipeline
+          template:
+            metadata:
+              labels:
+                run: rag-copilot-pipeline
             spec:
               volumes:
                 - name: persistent-vol
@@ -234,11 +298,11 @@
                   secret:
                     secretName: gcp-service-key
               containers:
-              - image: gcr.io/{{ gcp_project }}/cheese-app-api-service:{{ tag.stdout}}
+              - image: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-rag-copilot-pipeline:{{ tag.stdout }}"
                 imagePullPolicy: IfNotPresent
-                name: api
+                name: rag-copilot-pipeline
                 ports:
-                - containerPort: 9000
+                - containerPort: 8081
                   protocol: TCP
                 volumeMounts:
                   - name: persistent-vol
@@ -248,14 +312,11 @@
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
                     value: /secrets/gcp-service.json
-                  - name: GCS_BUCKET_NAME
-                    value: cheese-app-models
-                  - name: CHROMADB_HOST
-                    value: vector-db
-                  - name: CHROMADB_PORT
-                    value: "8000"
                   - name: GCP_PROJECT
                     value: "{{ gcp_project }}"
+                  - name: DEV
+                    value: "0"
+
     when: cluster_state == "present"
 
   - name: "Create Service for Frontend"
@@ -265,7 +326,7 @@
         apiVersion: v1
         kind: Service
         metadata:
-          name: frontend
+          name: sales-mate-frontend-react
           namespace: "{{cluster_name}}-namespace"
         spec:
           ports:
@@ -273,7 +334,7 @@
             protocol: TCP
             targetPort: 3000
           selector:
-            run: frontend
+            run: sales-mate-frontend-react
           type: NodePort
     when: cluster_state == "present"
 
@@ -284,7 +345,7 @@
         apiVersion: v1
         kind: Service
         metadata:
-          name: vector-db
+          name: llm-rag-chromadb
           namespace: "{{cluster_name}}-namespace"
         spec:
           ports:
@@ -292,7 +353,26 @@
             protocol: TCP
             targetPort: 8000
           selector:
-            run: vector-db
+            run: llm-rag-chromadb
+          type: NodePort
+    when: cluster_state == "present"
+  
+  - name: "Create Service for RAG Copilot Pipeline"
+    k8s:
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: rag-copilot-pipeline
+          namespace: "{{cluster_name}}-namespace"
+        spec:
+          ports:
+          - port: 8081
+            protocol: TCP
+            targetPort: 8081
+          selector:
+            run: rag-copilot-pipeline
           type: NodePort
     when: cluster_state == "present"
 
@@ -327,18 +407,20 @@
               - name: wait-for-chromadb
                 image: busybox:1.28
                 command: ['sh', '-c', 
-                  'until wget --spider -S http://vector-db:8000/api/v1/heartbeat 2>&1 | grep "HTTP/1.1 200"; 
+                  'until wget --spider -S http://llm-rag-chromadb:8000/api/v1/heartbeat 2>&1 | grep "HTTP/1.1 200"; 
                   do echo "Waiting for ChromaDB..."; sleep 5; done;']
               containers:
               - name: vector-db-loader
-                image: "gcr.io/{{ gcp_project }}/cheese-app-vector-db-cli:{{ tag.stdout}}"
+                image: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-rag-copilot-pipeline:{{ tag.stdout }}"
                 env:
                 - name: GCP_PROJECT
                   value: "{{ gcp_project }}"
                 - name: CHROMADB_HOST
-                  value: "vector-db"
+                  value: "llm-rag-chromadb"
                 - name: CHROMADB_PORT
                   value: "8000"
+                - name: DEV
+                  value: "3"
                 - name: GOOGLE_APPLICATION_CREDENTIALS
                   value: "/secrets/gcp-service.json"
                 volumeMounts:
@@ -375,15 +457,15 @@
         apiVersion: v1
         kind: Service
         metadata:
-          name: api
+          name: sales-mate-api-service
           namespace: "{{cluster_name}}-namespace"
         spec:
           ports:
-          - port: 9000
+          - port: 9876
             protocol: TCP
-            targetPort: 9000
+            targetPort: 9876
           selector:
-            run: api
+            run: sales-mate-api-service
           type: NodePort
     when: cluster_state == "present"
 
@@ -425,7 +507,7 @@
           annotations:
             kubernetes.io/ingress.class: "nginx"
             nginx.ingress.kubernetes.io/ssl-redirect: "false"
-            nginx.org/rewrites: "serviceName=frontend rewrite=/;serviceName=api rewrite=/"
+            nginx.org/rewrites: "serviceName=sales-mate-frontend-react rewrite=/;serviceName=sales-mate-api-service rewrite=/"
         spec:
           rules:
           - host: "{{ nginx_ingress_ip }}.sslip.io" # Host requires a domain and not just an IP
@@ -435,14 +517,14 @@
                 pathType: Prefix
                 backend:
                   service:
-                    name: frontend
+                    name: sales-mate-frontend-react
                     port:
                       number: 3000
               - path: /api/
                 pathType: Prefix
                 backend:
                   service:
-                    name: api
+                    name: sales-mate-api-service
                     port:
                       number: 9000
     when: cluster_state == "present"
