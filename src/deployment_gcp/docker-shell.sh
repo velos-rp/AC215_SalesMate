@@ -7,7 +7,7 @@
 export IMAGE_NAME="sales-mate-deployment-gcp"
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/secrets/
-export GCP_PROJECT="sales-mate-443815" # Change to your GCP Project
+export GCP_PROJECT="dulcet-doodad-443815-n3" # Change to your GCP Project
 export GCP_ZONE="us-central1-a"
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/deployment-shared.json"
 
