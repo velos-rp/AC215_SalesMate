@@ -21,19 +21,19 @@ const DataService = {
         // Any application initialization logic comes here
     },
     GetChats: async function (limit) {
-        return await api.get("/direct-chat/chats?limit=" + limit);
+        return await api.get("direct-chat/chats?limit=" + limit);
     },
     GetChat: async function (chat_id) {
-        return await api.get("/direct-chat/chats/" + chat_id);
+        return await api.get("direct-chat/chats/" + chat_id);
     },
     StartChatWithLLM: async function (message) {
-        return await api.post("/direct-chat/chats/", message);
+        return await api.post("direct-chat/chats/", message);
     },
     ContinueChatWithLLM: async function (chat_id, message) {
-        return await api.post("/direct-chat/chats/" + chat_id, message);
+        return await api.post("direct-chat/chats/" + chat_id, message);
     },
     AskRagCopilot: async function (query) {
-        return await api.get("/rag-copilot/insights", { params: { input: query } });
+        return await api.get("rag-copilot/insights", { params: { input: query } });
     },
 }
 
