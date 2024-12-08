@@ -22,7 +22,7 @@ Make sure that you have the following files in a `secrets` subfolder at this dir
 ##### Configuring OS Login for service account
 Run this within the `deployment` container
 ```
-gcloud compute project-info add-metadata --project sales-mate-443815 --metadata enable-oslogin=TRUE
+gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE
 ```
 
 ##### Create SSH key for service account (If given and loaded already, don't run this)

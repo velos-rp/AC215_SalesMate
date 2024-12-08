@@ -134,7 +134,7 @@
   - name: Importing credentials as a Secret - General GCP Service
     shell: |
       #!/bin/bash
-      kubectl create secret generic gcp-service-key --from-file=gcp-service.json=../secrets/gcp-service.json --namespace="{{cluster_name}}-namespace"
+      kubectl create secret generic gcp-service-key --from-file=gcp-service-shared.json=../secrets/gcp-service-shared.json --namespace="{{cluster_name}}-namespace"
     register: create_secret_op
     ignore_errors: yes
     when: cluster_state == "present"
@@ -147,7 +147,7 @@
   - name: Importing credentials as a Secret - Finetuned LLM GCP Service
     shell: |
       #!/bin/bash
-      kubectl create secret generic llm-service-key --from-file=llm-service.json=../secrets/llm-service-account.json --namespace="{{cluster_name}}-namespace"
+      kubectl create secret generic llm-service-key --from-file=llm-service-account.json=../secrets/llm-service-account.json --namespace="{{cluster_name}}-namespace"
     register: create_secret_op2
     ignore_errors: yes
     when: cluster_state == "present"
@@ -311,7 +311,7 @@
                     mountPath: /secrets
                 env:
                   - name: GOOGLE_APPLICATION_CREDENTIALS
-                    value: /secrets/gcp-service.json
+                    value: /secrets/gcp-service-shared.json
                   - name: GCP_PROJECT
                     value: "{{ gcp_project }}"
                   - name: DEV
@@ -422,7 +422,7 @@
                 - name: DEV
                   value: "3"
                 - name: GOOGLE_APPLICATION_CREDENTIALS
-                  value: "/secrets/gcp-service.json"
+                  value: "/secrets/gcp-service-shared.json"
                 volumeMounts:
                 - name: google-cloud-key
                   mountPath: /secrets
@@ -526,5 +526,5 @@
                   service:
                     name: sales-mate-api-service
                     port:
-                      number: 9000
+                      number: 9876
     when: cluster_state == "present"
