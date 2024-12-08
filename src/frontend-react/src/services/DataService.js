@@ -3,14 +3,24 @@ import axios from 'axios';
 
 // Create an axios instance with base configuration
 const api = axios.create({
-    baseURL: BASE_API_URL
+    baseURL: process.env.NODE_ENV === 'production' ? '/api' : BASE_API_URL
 });
+
 // Add request interceptor to include session ID in headers
 api.interceptors.request.use((config) => {
     const sessionId = localStorage.getItem('userSessionId');
     if (sessionId) {
         config.headers['X-Session-ID'] = sessionId;
     }
+
+    console.log("Base_API_URL", BASE_API_URL);
+    console.log("config.url", config.url);
+    
+    // Ensure all requests in production prepend /api
+    if (process.env.NODE_ENV === 'production' && !config.url.startsWith('/api')) {
+        config.url = `/api${config.url}`;
+    }
+    
     return config;
 }, (error) => {
     return Promise.reject(error);
