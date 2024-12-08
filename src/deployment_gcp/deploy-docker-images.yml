@@ -9,6 +9,20 @@
   - name: Print tag
     debug:
       var: tag
+  - name: Build finetuning container image
+    community.general.docker_image:
+      build:
+        path: /finetuning_pipeline
+        platform: linux/amd64/v2
+        dockerfile: Dockerfile
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-finetuning:{{ tag.stdout}}"
+      source: build
+  - name: Push finetuneing image to GCR
+    community.general.docker_image:
+      name: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-finetuning:{{ tag.stdout}}"
+      repository: "{{ artifact_registry_location }}/{{ gcp_project }}/{{ artifact_registry_repository }}/sales-mate-finetuning:{{ tag.stdout}}"
+      push: yes
+      source: local
   - name: Build frontend container image
     community.general.docker_image:
       build:

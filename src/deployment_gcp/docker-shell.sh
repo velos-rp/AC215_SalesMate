@@ -24,6 +24,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$BASE_DIR/../api_service":/api_service \
 -v "$BASE_DIR/../frontend-react":/frontend-react \
 -v "$BASE_DIR/../rag_copilot_pipeline":/rag_copilot_pipeline \
+-v "$BASE_DIR/../finetuning_pipeline":/finetuning_pipeline \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
 -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
 -e GCP_PROJECT=$GCP_PROJECT \
