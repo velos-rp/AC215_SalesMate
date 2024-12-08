@@ -24,7 +24,7 @@ services:
             - 8081:8081 # Expose the FastAPI port to host
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
-            GCP_PROJECT: "ac-215-436117"
+            GCP_PROJECT: "dulcet-doodad-443815-n3"
             DEV: "${DEV}" # Change to 0 for running web server
         healthcheck:
             test: ["CMD", "curl", "-f", "http://rag-copilot-pipeline:8081/"]
