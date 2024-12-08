@@ -2,9 +2,7 @@ import { BASE_API_URL, uuid } from "./Common";
 import axios from 'axios';
 
 // Create an axios instance with base configuration
-const api = axios.create({
-    baseURL: BASE_API_URL
-});
+const api = axios.create();
 // Add request interceptor to include session ID in headers
 api.interceptors.request.use((config) => {
     const sessionId = localStorage.getItem('userSessionId');
@@ -21,19 +19,19 @@ const DataService = {
         // Any application initialization logic comes here
     },
     GetChats: async function (limit) {
-        return await api.get("/direct-chat/chats?limit=" + limit);
+        return await api.get(BASE_API_URL + "/direct-chat/chats?limit=" + limit);
     },
     GetChat: async function (chat_id) {
-        return await api.get("/direct-chat/chats/" + chat_id);
+        return await api.get(BASE_API_URL + "/direct-chat/chats/" + chat_id);
     },
     StartChatWithLLM: async function (message) {
-        return await api.post((process.env.NODE_ENV === 'production' ? "/api" : "") + "/direct-chat/chats/", message);
+        return await api.post(BASE_API_URL + "/direct-chat/chats/", message);
     },
     ContinueChatWithLLM: async function (chat_id, message) {
-        return await api.post((process.env.NODE_ENV === 'production' ? "/api" : "") + "/direct-chat/chats/" + chat_id, message);
+        return await api.post(BASE_API_URL + "/direct-chat/chats/" + chat_id, message);
     },
     AskRagCopilot: async function (query) {
-        return await api.get("/rag-copilot/insights", { params: { input: query } });
+        return await api.get(BASE_API_URL + "/rag-copilot/insights", { params: { input: query } });
     },
 }
 
