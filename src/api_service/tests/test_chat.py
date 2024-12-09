@@ -9,7 +9,7 @@ def test_direct_chat():
 
     # Define the base URL
     HOST = "sales-mate-api-service"
-    BASE = f"http://{HOST}:9000"
+    BASE = f"http://{HOST}:9876"
 
     # Set headers once for the session
     # make the session ID a uuid string

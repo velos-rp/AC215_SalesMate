@@ -21,6 +21,5 @@ app.add_middleware(
 async def get_index():
     return {"message": "Welcome to Sales Mate!"}
 
-
 app.include_router(rag_copilot.router, prefix="/rag-copilot")
 app.include_router(direct_chat.router, prefix="/direct-chat")

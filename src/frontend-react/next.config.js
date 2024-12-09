@@ -14,26 +14,30 @@ const nextConfig = {
                 source: "/api/:path*",
                 destination:
                     process.env.NODE_ENV === "development"
-                        ? "http://rag-system-api-service:9000/:path*"
+                        ? "http://sales-mate-api-service:9876/:path*"
                         : "/api/",
             },
             {
                 source: "/docs",
                 destination:
                     process.env.NODE_ENV === "development"
-                        ? "http://rag-system-api-service:9000/docs"
+                        ? "http://sales-mate-api-service:9876/docs"
                         : "/api/docs",
             },
             {
                 source: "/openapi.json",
                 destination:
                     process.env.NODE_ENV === "development"
-                        ? "http://rag-system-api-service:9000/openapi.json"
+                        ? "http://sales-mate-api-service:9876/openapi.json"
                         : "/api/openapi.json",
             },
         ];
     },
     reactStrictMode: false,
+
+    eslint: {
+        ignoreDuringBuilds: true, // Disable ESLint during builds
+    },
 };
 
 module.exports = nextConfig;

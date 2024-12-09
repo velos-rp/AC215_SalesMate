@@ -4,9 +4,9 @@ import requests
 def test_rag_endpoint():
     HOST = "sales-mate-api-service"
 
-    BASE = f"http://{HOST}:9000"
+    BASE = f"http://{HOST}:9876"
     ENDPOINT = "rag-copilot"
-    URL = f"{BASE}/{ENDPOINT}/"
+    URL = f"{BASE}/{ENDPOINT}/insights"
 
     sample_chat = """
     Sorry, I was saying that in the short term, I'm thinking of buying a
@@ -18,6 +18,19 @@ def test_rag_endpoint():
     params = {"input": sample_chat}
 
     response = requests.get(URL, params=params)
+
+    # Check if the request was successful
+    assert response.status_code == 200
+
+
+def test_info_endpoint():
+    HOST = "sales-mate-api-service"
+
+    BASE = f"http://{HOST}:9876"
+    ENDPOINT = "rag-copilot"
+    URL = f"{BASE}/{ENDPOINT}/info"
+
+    response = requests.get(URL)
 
     # Check if the request was successful
     assert response.status_code == 200
