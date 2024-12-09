@@ -65,13 +65,20 @@ jobs:
           sudo mkdir -p src/api_service/chat-history/gemini
           sudo chmod -R 777 src/
     
-      # Step 4: Run the Primary API Docker Test Script
-      - name: Run Primary API Docker Tests
+
+      # Step 4.1: Set up Docker containers for primary tests
+      - name: Set up Docker containers and ensure API availability for backend and copilot
         run: |
           cd src
           source docker-shell.sh
           sleep 10s
+          docker compose exec sales-mate-api-service curl -f http://sales-mate-api-service:9876/
+          docker compose exec rag-copilot-pipeline curl -f http://rag-copilot-pipeline:8081/
 
+      # Step 4.2: Run the Primary API Docker Test Script
+      - name: Run Primary API Docker Tests
+        run: |
+          
           # Define the services to test
           services=("rag-copilot-pipeline" "sales-mate-api-service")
 
@@ -146,7 +153,7 @@ jobs:
       needs:
         - test-backend
         - test-frontend
-      if: github.ref == 'refs/heads/main'  # Ensures it runs only on pushes to the main branch
+      if: false  # Temporarily skipped
       steps:
         # Step 1: Checkout the repository code
         - name: Checkout code
@@ -208,7 +215,7 @@ jobs:
             $IMAGE_NAME
 
             # Execute container build and deployment
-            docker exec -it $IMAGE_NAME gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE /bin/bash
-            docker exec -it $IMAGE_NAME ansible-playbook deploy-docker-images.yml -i inventory.yml /bin/bash
-            docker exec -it $IMAGE_NAME ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present /bin/bash
+            docker exec $IMAGE_NAME gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE /bin/bash
+            docker exec $IMAGE_NAME ansible-playbook deploy-docker-images.yml -i inventory.yml /bin/bash
+            docker exec $IMAGE_NAME ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present /bin/bash
 
