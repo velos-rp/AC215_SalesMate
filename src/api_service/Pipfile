@@ -10,7 +10,6 @@ google-generativeai = "*"
 google-cloud-aiplatform = "*"
 pandas = "*"
 uvicorn = "*"
-fastapi = {extras = ["standard"], version = "*"}
 python-multipart = "*"
 langchain = "*"
 llama-index = "*"
@@ -20,6 +19,8 @@ jupyterlab = "*"
 ipympl = "*"
 notebook = "*"
 pytest = "*"
+google-cloud-secret-manager = "*"
+fastapi = "*"
 
 [dev-packages]
 
