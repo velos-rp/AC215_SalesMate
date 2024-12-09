@@ -9,10 +9,10 @@ echo "The current directory is: $(pwd)"
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/secrets/
 
-export GCP_PROJECT="project-id-3187519002330642642" # CHANGE TO YOUR PROJECT ID
+export GCP_PROJECT="dulcet-doodad-443815-n3" # CHANGE TO YOUR PROJECT ID
 export GCS_BUCKET_NAME="test-llm-rp" # CHANGE TO YOUR PROJECT BUCKET
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-service-account.json"
-export GCP_SERVICE_ACCOUNT="llm-service-account@project-id-3187519002330642642.iam.gserviceaccount.com" # CHANGE TO YOUR PROJECT ID
+export GCP_SERVICE_ACCOUNT="llm-service-account@dulcet-doodad-443815-n3.iam.gserviceaccount.com" # CHANGE TO YOUR PROJECT ID
 export LOCATION="us-central1"
 
 export IMAGE_NAME="gemini-finetuner"

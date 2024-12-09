@@ -20,6 +20,7 @@ jupyterlab = "*"
 ipympl = "*"
 notebook = "*"
 pytest = "*"
+google-cloud-secret-manager = "*"
 
 [dev-packages]
 
