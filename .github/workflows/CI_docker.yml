@@ -67,7 +67,7 @@ jobs:
     
 
       # Step 4.1: Set up Docker containers for primary tests
-      - name: Set up Docker containers and ensure API availability for backend and copilot
+      - name: Run Primary API Docker Test Script
         run: |
           cd src
           source docker-shell.sh
@@ -75,10 +75,6 @@ jobs:
           docker compose exec sales-mate-api-service curl -f http://sales-mate-api-service:9876/
           docker compose exec rag-copilot-pipeline curl -f http://rag-copilot-pipeline:8081/
 
-      # Step 4.2: Run the Primary API Docker Test Script
-      - name: Run Primary API Docker Tests
-        run: |
-          
           # Define the services to test
           services=("rag-copilot-pipeline" "sales-mate-api-service")
 
