@@ -11,10 +11,14 @@ api.interceptors.request.use((config) => {
         config.headers['X-Session-ID'] = sessionId;
     }
 
+    console.log("Prelim URL: " + config.url);
+
     // In production, ensure the URL starts with /api
     if (process.env.NODE_ENV === 'production') {
         const path = config.url.replace(BASE_API_URL, '');
+        console.log("Path with API prefix replace: ", path);
         config.url = `/api${path}`;
+        console.log("Final URL: " + config.url);
     } else {
         // In development, use the full BASE_API_URL
         if (!config.url.startsWith(BASE_API_URL)) {
