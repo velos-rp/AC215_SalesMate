@@ -73,6 +73,10 @@ jobs:
           source docker-shell.sh
           sleep 10s
           docker compose exec sales-mate-api-service curl -f http://sales-mate-api-service:9876/
+
+          # Get logs from containers so far
+          docker compose logs
+
           docker compose exec rag-copilot-pipeline curl -f http://rag-copilot-pipeline:8081/
 
           # Define the services to test
