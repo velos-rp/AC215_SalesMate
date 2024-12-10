@@ -174,7 +174,7 @@ jobs:
       needs:
         - test-backend
         - test-frontend
-      if: false  # Temporarily skipped
+      if: github.ref == 'refs/heads/main'  # Triggers only on pushes to main
       steps:
         # Step 1: Checkout the repository code
         - name: Checkout code
