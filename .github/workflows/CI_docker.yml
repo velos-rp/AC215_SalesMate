@@ -65,12 +65,40 @@ jobs:
           sudo mkdir -p src/api_service/chat-history/gemini
           sudo chmod -R 777 src/
     
-      # Step 4: Run the Primary API Docker Test Script
-      - name: Run Primary API Docker Tests
+
+      # Step 4.1: Set up Docker containers for primary tests
+      - name: Run Primary API Docker Test Script
         run: |
           cd src
-          source docker-shell.sh
-          sleep 10s
+          export SECRETS_DIR_COPILOT="./rag_copilot_pipeline/secrets"
+          export SECRETS_DIR_API="./api_service/secrets"
+          export DEV="0"
+          export FINETUNED_MODEL="0"
+          export GCP_PROJECT="dulcet-doodad-443815-n3"
+
+          # Create the network if we don't have it yet
+          docker network inspect sales-mate-network >/dev/null 2>&1 || docker network create sales-mate-network
+
+          # Build the backend images based on the Dockerfile
+          docker build -t rag-copilot-pipeline -f ./rag_copilot_pipeline/Dockerfile ./rag_copilot_pipeline/
+          docker build -t sales-mate-api-service -f ./api_service/Dockerfile ./api_service/
+
+          # Build the frontend based on the Dockerfile
+          docker build -t "sales-mate-frontend-react" -f ./frontend-react/Dockerfile.dev ./frontend-react/
+
+          # Run all containers
+          docker compose up --build -d --wait
+
+          sleep 20s
+          
+          # Get logs from containers so far
+          docker compose logs
+          
+          docker compose exec sales-mate-api-service curl -f http://sales-mate-api-service:9876/
+          curl -f http://localhost:9876/
+
+          docker compose exec rag-copilot-pipeline curl -f http://rag-copilot-pipeline:8081/
+          curl -f http://localhost:8081/
 
           # Define the services to test
           services=("rag-copilot-pipeline" "sales-mate-api-service")
@@ -139,3 +167,76 @@ jobs:
         working-directory: src/frontend-react
         run: npm run test
         continue-on-error: true
+
+
+  deploy_kubernetes:
+      runs-on: ubuntu-latest
+      needs:
+        - test-backend
+        - test-frontend
+      if: github.ref == 'refs/heads/main'  # Triggers only on pushes to main
+      steps:
+        # Step 1: Checkout the repository code
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        # Step 2: Set up Python environment
+        - name: Set up Python 3.9
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.9'
+        
+
+        # Step 3: Load Secrets for GCP Keys and validate json
+        # Step 3: Load Secrets for GCP Keys and validate json
+        - name: Write Secret to JSON File
+          env:
+            GCP_KEY_COPILOT: ${{ secrets.GCP_KEY_COPILOT }}
+            DEPLOYMENT_GCP_KEY: ${{ secrets.DEPLOYMENT_GCP_KEY }}
+            GCP_KEY_API: ${{ secrets.GCP_KEY_API }}
+            SSH_KEY_DEPLOYMENT: ${{ secrets.SSH_KEY_DEPLOYMENT }}
+            SSH_KEY_DEPLOYMENT_PUB: ${{ secrets.SSH_KEY_DEPLOYMENT_PUB }}
+          run: |
+            mkdir -p src/deployment_gcp/secrets
+            python -c "import os; open('src/deployment_gcp/secrets/gcp-service-shared.json', 'w').write(os.getenv('GCP_KEY_COPILOT', ''))"
+            python -c "import os; open('src/deployment_gcp/secrets/deployment-shared.json', 'w').write(os.getenv('DEPLOYMENT_GCP_KEY', ''))"
+            python -c "import os; open('src/deployment_gcp/secrets/llm-service-account.json', 'w').write(os.getenv('GCP_KEY_API', ''))"
+            python -c "import os; open('src/deployment_gcp/secrets/ssh-key-deployment.json', 'w').write(os.getenv('SSH_KEY_DEPLOYMENT', ''))"
+            python -c "import os; open('src/deployment_gcp/secrets/ssh-key-deployment-pub.json', 'w').write(os.getenv('SSH_KEY_DEPLOYMENT_PUB', ''))"
+        
+        # Step 4: Run the Deployment Docker Container
+        - name: Run Deployment Docker Container
+          run: |
+            cd src/deployment_gcp
+            
+
+            export IMAGE_NAME="sales-mate-deployment-gcp"
+            export BASE_DIR=$(pwd)
+            export SECRETS_DIR=$(pwd)/secrets/
+            export GCP_PROJECT="dulcet-doodad-443815-n3" # Change to your GCP Project
+            export GCP_ZONE="us-central1-a"
+            export GOOGLE_APPLICATION_CREDENTIALS="/secrets/deployment-shared.json"
+
+            # Build the image based on the Dockerfile
+            docker build -t $IMAGE_NAME --platform=linux/amd64 -f Dockerfile .
+
+            # Run the container
+            docker run --rm --name $IMAGE_NAME -tid \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$BASE_DIR":/app \
+            -v "$SECRETS_DIR":/secrets \
+            -v "$HOME/.ssh":/home/app/.ssh \
+            -v "$BASE_DIR/../api_service":/api_service \
+            -v "$BASE_DIR/../frontend-react":/frontend-react \
+            -v "$BASE_DIR/../rag_copilot_pipeline":/rag_copilot_pipeline \
+            -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+            -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
+            -e GCP_PROJECT=$GCP_PROJECT \
+            -e GCP_ZONE=$GCP_ZONE \
+            $IMAGE_NAME
+
+            # Execute container build and deployment
+            docker exec $IMAGE_NAME gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE /bin/bash
+            docker exec $IMAGE_NAME ansible-playbook deploy-docker-images.yml -i inventory.yml /bin/bash
+            docker exec $IMAGE_NAME ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present /bin/bash
+

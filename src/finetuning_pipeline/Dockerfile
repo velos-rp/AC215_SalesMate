@@ -16,6 +16,11 @@ ENV PYENV_SHELL=/bin/bash
 # Tell Python to disable buffering so we don't lose any logs.
 ENV PYTHONUNBUFFERED=1
 
+# Special command to avoid local machineruntime error, Ignacio helped me find this after class Thursday 9/19
+# From https://stackoverflow.com/questions/67732260/how-to-fix-hash-sum-mismatch-in-docker-on-mac
+RUN echo "Acquire::http::Pipeline-Depth 0; \n Acquire::http::No-Cache true; \n Acquire::BrokenProxy    true;" > /etc/apt/apt.conf.d/99fixbadproxy
+
+
 # Ensure we have an up to date baseline, install dependencies and
 # create a user so we don't run the app as root
 RUN set -ex; \

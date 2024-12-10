@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Exit immediately if any command fails
-set -e
-
-
 # Skip pre-commit hook if --no-verify used
 for arg in "$@"; do
     if [ "$arg" = "--no-verify" ]; then
@@ -27,6 +23,12 @@ source docker-shell.sh
 
 # Wait for the containers to start
 sleep 10
+
+docker compose exec sales-mate-api-service curl -f http://sales-mate-api-service:9876/
+curl -f http://localhost:9876/
+
+docker compose exec rag-copilot-pipeline curl -f http://rag-copilot-pipeline:8081/
+curl -f http://localhost:8081/
 
 # Define the services to test
 # add 'sales-mate-api-service'
