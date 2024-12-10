@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# exit immediately if a command exits with a non-zero status
-set -e
-
 export SECRETS_DIR_COPILOT="./rag_copilot_pipeline/secrets"
 export SECRETS_DIR_API="./api_service/secrets"
 export DEV="0"
+export FINETUNED_MODEL="0"
+export GCP_PROJECT="dulcet-doodad-443815-n3"
 
 # Create the network if we don't have it yet
 docker network inspect sales-mate-network >/dev/null 2>&1 || docker network create sales-mate-network

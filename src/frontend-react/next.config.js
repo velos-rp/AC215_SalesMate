@@ -15,7 +15,7 @@ const nextConfig = {
                 destination:
                     process.env.NODE_ENV === "development"
                         ? "http://sales-mate-api-service:9876/:path*"
-                        : "/api/",
+                        : "/api/:path*",
             },
             {
                 source: "/docs",

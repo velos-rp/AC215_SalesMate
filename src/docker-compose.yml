@@ -24,14 +24,14 @@ services:
             - 8081:8081 # Expose the FastAPI port to host
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-key.json"
-            GCP_PROJECT: "dulcet-doodad-443815-n3"
+            GCP_PROJECT: ${GCP_PROJECT}
             DEV: "${DEV}" # Change to 0 for running web server
         healthcheck:
             test: ["CMD", "curl", "-f", "http://rag-copilot-pipeline:8081/"]
             interval: 30s
             timeout: 5s
             retries: 5
-            start_period: 30s
+            start_period: 10s
         depends_on:
             - chromadb
     sales-mate-api-service:
@@ -45,16 +45,16 @@ services:
             - 9876:9876 # Expose the FastAPI port to host
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: "/secrets/llm-service-account.json"
-            GCP_PROJECT: "project-id-3187519002330642642"
+            GCP_PROJECT: ${GCP_PROJECT}
             DEV: ${DEV} # Change to 0 for running web server
-            FINETUNED_MODEL: "1" # Toggle for using finetuned model or not
+            FINETUNED_MODEL: ${FINETUNED_MODEL} # Toggle for using finetuned model or not
             RAG_COLLECTION_NAME: "investment-management"
         healthcheck:
             test: ["CMD", "curl", "-f", "http://sales-mate-api-service:9876/"]
             interval: 30s
             timeout: 5s
             retries: 5
-            start_period: 30s
+            start_period: 10s
         depends_on:
             - rag-copilot-pipeline
     chromadb:
