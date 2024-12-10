@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# exit immediately if a command exits with a non-zero status
-set -e
-
 export SECRETS_DIR_COPILOT="./rag_copilot_pipeline/secrets"
 export SECRETS_DIR_API="./api_service/secrets"
 export DEV="0"
