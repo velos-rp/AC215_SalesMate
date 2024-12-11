@@ -96,3 +96,17 @@ ansible-playbook deploy-docker-images.yml -i inventory.yml
 ```
 ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
 ```
+
+### Continuous Deployment
+
+To integrate the ansible scripts with a continuous deployment pipeline, we added another job in our `CI_docker.yml` workflow file to run the ansible scripts to push images to the Google Artifact Registry and deploy the Kubernetes cluster.
+To accomplish this task, we spin up the deployment container and run the `cd-deployment.sh` script in the deployment container for this job.
+
+### Stress Testing Pipeline
+
+After deploying the application to Kubernetes, we stress tested the app by using the Hey HTTP load generator CLI package (https://github.com/rakyll/hey).
+
+We run the following commands: `hey -z 1m -c 50 http://34.23.255.18.sslip.io/` and `hey -z 1m -c 50 http://34.23.255.18.sslip.io/api/`.
+These simulate 50 concurrent users that repeatedly send requests to the attached URLs to the deployed application. 
+
+After doing this we watch the deployments in the Kubernetes cluster: `kubectl get nodes -w`

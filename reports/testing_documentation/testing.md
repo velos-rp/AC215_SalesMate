@@ -10,7 +10,7 @@ To run these tests, we use the action workflows with configurations located in t
 
 #### API Service
 - `src/api_service/tests/test_direct_chat.py` We have one test that tests the direct chat endpoint to create a chat session. This is a simple test that demands the server returns a success code.
-- `src/api_service/tests/test_rag_endpoint.py` We have one test that tests the sales copilot endpoint. This is a simple test that demands the server returns a success code using a basic query.
+- `src/api_service/tests/test_rag_endpoint.py` We have one test that tests the sales copilot endpoint. This is a simple test that demands the server returns a success code using a basic query. There is a second test that queries the information from the vector database as well. 
 
 #### RAG Copilot Pipeline
 - `src/rag_copilot_pipeline/tests/test_preprocessing.py` We have one test that on the preprocessing workflow tha tests the chunking functionality of the pipeline.
