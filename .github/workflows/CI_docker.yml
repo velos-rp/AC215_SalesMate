@@ -235,9 +235,9 @@ jobs:
             -e GCP_ZONE=$GCP_ZONE \
             $IMAGE_NAME
 
-            - name: Execute Docker Entrypoint Script
-            run: |
-              docker exec $IMAGE_NAME /bin/bash -c "source /app/docker-entrypoint.sh"
+        - name: Execute Docker Entrypoint Script
+          run: |
+            docker exec $IMAGE_NAME /bin/bash -c "source /app/docker-entrypoint.sh"
           
         - name: Add Metadata to GCP Project
           run: |
