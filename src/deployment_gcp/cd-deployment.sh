@@ -7,10 +7,6 @@ gcloud config set project $GCP_PROJECT
 # Configure GCR
 gcloud auth configure-docker us-docker.pkg.dev -q
 
-
-gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE
-
-
 echo "Adding Metadata to GCP Project..."
 gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE
 
