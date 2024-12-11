@@ -41,7 +41,7 @@ The code for the application is contained on:
 - src/api_service: the backend container
 - src/rag_copilot_pipeline: the copilot container
 
-Those containers are orchestrated by the src/docker-compose.yml. To run it, add the required secrets inside each of the container and run src/docker-shell.sh.
+Those containers are orchestrated by the src/docker-compose.yml. To run the frontend/backend applications locally, add the required secrets inside each of the container and run src/docker-shell.sh.
 
 More information can be found in the README of each container.
 
@@ -55,4 +55,4 @@ The deploy of the application is done using an Ansible playbook contained in:
 
 We hvae set up a CI/CD pipeline in github, which is set up inside:
 
-- .github/workflows/CI_dcoker.yml
+- .github/workflows/CI_docker.yml
