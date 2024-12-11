@@ -8,7 +8,7 @@ Make sure that you have the following files in a `secrets` subfolder at this dir
     - `src/deployment_gcp/secrets/ssh-key-deployment.pub` - SSH Key
 
 
-## Deployment Setup
+## Deployment Setup (Adapted from AC215 Class Tutorial)
 
 #### Run `deployment` container
 - cd into `deployment`

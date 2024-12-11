@@ -235,19 +235,5 @@ jobs:
             -e GCP_ZONE=$GCP_ZONE \
             $IMAGE_NAME
 
-        - name: Execute Docker Entrypoint Script
-          run: |
-            docker exec $IMAGE_NAME /bin/bash -c "source /app/docker-entrypoint.sh"
-          
-        - name: Add Metadata to GCP Project
-          run: |
-            docker exec $IMAGE_NAME /bin/bash -c "gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE"
-        
-        - name: Deploy Docker Images with Ansible
-          run: |
-            docker exec $IMAGE_NAME /bin/bash -c "ansible-playbook deploy-docker-images.yml -i inventory.yml"
-        
-        - name: Deploy Kubernetes Cluster with Ansible
-          run: |
-            docker exec $IMAGE_NAME /bin/bash -c "ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present"
-          
+            echo "Running Entrypoint Script..."
+            docker exec $IMAGE_NAME /bin/bash -c "source /app/cd-deployment.sh"
