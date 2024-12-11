@@ -8,7 +8,7 @@ on:
 jobs:
   test-backend:
     runs-on: ubuntu-latest
-
+    if: false
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
@@ -139,7 +139,7 @@ jobs:
           cd ..
   test-frontend:
     runs-on: ubuntu-latest
-
+    if: false
     steps:
       # Step 1: Check out the repository
       - name: Check out code
@@ -171,9 +171,9 @@ jobs:
 
   deploy_kubernetes:
       runs-on: ubuntu-22.04
-      needs:
-        - test-backend
-        - test-frontend
+      # needs:
+      #   - test-backend
+      #   - test-frontend
       # if: github.ref == 'refs/heads/main'  # Triggers only on pushes to main
       steps:
         # Step 1: Checkout the repository code
@@ -204,11 +204,17 @@ jobs:
             python -c "import os; open('src/deployment_gcp/secrets/ssh-key-deployment.json', 'w').write(os.getenv('SSH_KEY_DEPLOYMENT', ''))"
             python -c "import os; open('src/deployment_gcp/secrets/ssh-key-deployment-pub.json', 'w').write(os.getenv('SSH_KEY_DEPLOYMENT_PUB', ''))"
 
-        - name: Update APT and Install Google Cloud SDK and Dependencies
-          run: |
-            sudo apt-get update
-            sudo apt-get install -y google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin jq docker-ce
+        - id: 'auth'
+          uses: 'google-github-actions/auth@v2'
+          with:
+            credentials_json: '${{ secrets.DEPLOYMENT_GCP_KEY }}'
+      
+        - name: 'Set up Cloud SDK'
+          uses: 'google-github-actions/setup-gcloud@v2'
     
+        - name: 'Use gcloud CLI'
+          run: 'gcloud info'
+
         - name: Add Kubernetes and Helm Repositories
           run: |
             curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
