@@ -203,37 +203,53 @@ jobs:
             python -c "import os; open('src/deployment_gcp/secrets/llm-service-account.json', 'w').write(os.getenv('GCP_KEY_API', ''))"
             python -c "import os; open('src/deployment_gcp/secrets/ssh-key-deployment.json', 'w').write(os.getenv('SSH_KEY_DEPLOYMENT', ''))"
             python -c "import os; open('src/deployment_gcp/secrets/ssh-key-deployment-pub.json', 'w').write(os.getenv('SSH_KEY_DEPLOYMENT_PUB', ''))"
-        
+
+        - name: Update APT and Install Google Cloud SDK and Dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y google-cloud-sdk google-cloud-sdk-gke-gcloud-auth-plugin jq docker-ce
+    
+        - name: Add Kubernetes and Helm Repositories
+          run: |
+            curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+            echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+            curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+            echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+    
+        - name: Install Kubernetes, Helm, and Ansible
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends kubectl helm python3 python3-pip
+            pip install openshift ansible docker apache-libcloud
+    
+        - name: Install Ansible Galaxy Collections
+          run: |    
+            ansible-galaxy collection install community.general community.kubernetes
+
         # Step 4: Run the Deployment Docker Container
         - name: Run Deployment Docker Container
           run: |
             cd src/deployment_gcp
             
 
-            export IMAGE_NAME="sales-mate-deployment-gcp"
-            export BASE_DIR=$(pwd)
-            export SECRETS_DIR=$(pwd)/secrets/
-            export GCP_PROJECT="dulcet-doodad-443815-n3" # Change to your GCP Project
-            export GCP_ZONE="us-central1-a"
-            export GOOGLE_APPLICATION_CREDENTIALS="/secrets/deployment-shared.json"
+            # Authenticate gcloud using service account
+            gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS
+            # Set GCP Project Details
+            gcloud config set project $GCP_PROJECT
+            # Configure GCR
+            gcloud auth configure-docker us-docker.pkg.dev -q
 
-            # Build the image based on the Dockerfile
-            docker build -t $IMAGE_NAME --platform=linux/amd64 -f Dockerfile .
 
-            # Run the container
-            docker run --rm --name $IMAGE_NAME -d \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -v "$BASE_DIR":/app \
-            -v "$SECRETS_DIR":/secrets \
-            -v "$HOME/.ssh":/home/app/.ssh \
-            -v "$BASE_DIR/../api_service":/api_service \
-            -v "$BASE_DIR/../frontend-react":/frontend-react \
-            -v "$BASE_DIR/../rag_copilot_pipeline":/rag_copilot_pipeline \
-            -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
-            -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
-            -e GCP_PROJECT=$GCP_PROJECT \
-            -e GCP_ZONE=$GCP_ZONE \
-            $IMAGE_NAME
+            # gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE
 
-            echo "Running Entrypoint Script..."
-            docker exec $IMAGE_NAME /bin/bash -c "source /app/cd-deployment.sh"
+
+            # echo "Adding Metadata to GCP Project..."
+            # gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE
+
+            echo "Deploying Docker Images with Ansible..."
+            ansible-playbook deploy-docker-images.yml -i inventory.yml
+
+            echo "Deploying Kubernetes Cluster with Ansible..."
+            ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+
+            echo "Kubernetes Cluster deployed successfully!"
