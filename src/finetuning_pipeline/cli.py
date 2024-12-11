@@ -1,24 +1,23 @@
 import argparse
-import glob
-import json
 import os
 import time
 
-import pandas as pd
 import vertexai
 from data_processing import process_pipeline
-from google.cloud import storage
-from vertexai.generative_models import GenerationConfig, GenerativeModel
+from google.cloud import secretmanager
+from vertexai.generative_models import GenerativeModel
 from vertexai.preview.tuning import sft
+
+threshold_eval_fraction_of_correct_next_step_preds = 0.4
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
-TRAIN_DATASET = (
-    "gs://test-llm-rp/sample-calls/sample_1k_train.jsonl"  # Replace with your dataset
-)
+SECRET_ID = "llm-endpoint"
+TRAIN_DATASET = "gs://ac215_salesmate_data/data/data_sample-calls_sample_1k_train.jsonl"
 VALIDATION_DATASET = (
-    "gs://test-llm-rp/sample-calls/sample_1k_test.jsonl"  # Replace with your dataset
+    "gs://ac215_salesmate_data/data/data_sample-calls_sample_1k_test.jsonl"
 )
+
 
 GCP_LOCATION = "us-central1"
 GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002"  # gemini-1.5-pro-002
@@ -32,7 +31,32 @@ generation_config = {
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 
 
-def train(wait_for_job=False):
+def evaluate_performance(sft_tuning_job):
+    experiment = sft_tuning_job.experiment
+    df = experiment.get_data_frame()
+    performance = float(
+        df["time_series_metric./eval_fraction_of_correct_next_step_preds"].iloc[0]
+    )
+    if performance > threshold_eval_fraction_of_correct_next_step_preds:
+        client = secretmanager.SecretManagerServiceClient()
+        secret_name = f"projects/{GCP_PROJECT}/secrets/{SECRET_ID}"
+        # Add the new secret version
+        client.add_secret_version(
+            request={
+                "parent": secret_name,
+                "payload": {
+                    "data": sft_tuning_job.tuned_model_endpoint_name.encode("UTF-8")
+                },
+            }
+        )
+        print("secret_updated")
+        return
+    else:
+        print("Low performance, keeping previous model")
+        return
+
+
+def train(wait_for_job=True):
     print("train()")
 
     # Supervised Fine Tuning
@@ -62,14 +86,15 @@ def train(wait_for_job=False):
     print(f"Tuned model name: {sft_tuning_job.tuned_model_name}")
     print(f"Tuned model endpoint name: {sft_tuning_job.tuned_model_endpoint_name}")
     print(f"Experiment: {sft_tuning_job.experiment}")
+    evaluate_performance(sft_tuning_job)
 
 
 def chat():
     print("chat()")
-    # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
     # MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
-    # MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
-    MODEL_ENDPOINT = "projects/project-id-3187519002330642642/locations/us-central1/endpoints/6870682135716429824"  # Finetuned model
+    MODEL_ENDPOINT = (
+        "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
+    )
 
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
@@ -91,7 +116,7 @@ def main(args=None):
         if args.data_path:
             process_pipeline(data_path=args.data_path)
         else:
-            process_pipeline(data_path=args.data_path)
+            process_pipeline()
 
     if args.train:
         train()

@@ -1,10 +1,7 @@
-import argparse
 import ast
 import io
 import json
 import os
-from pathlib import Path
-from pprint import pprint
 
 import pandas as pd
 
@@ -20,9 +17,9 @@ PARENT = f"projects/{GCP_PROJECT}"
 OUTPUT_FOLDER = "output"
 KEYS_TO_TRANSLATE = ["message", "summary", "title", "type"]
 
-RAW_EXTRACT_BLOB_NAME = "data/extract_calls_pt.csv"
-OUTPUT_ROOT = "gs://test-llm-rp/sample-calls/sample_1k_"  #
-BUCKET_NAME = "ac215_salesmate"
+RAW_EXTRACT_BLOB_NAME = "data/data_extract_calls_pt.csv"
+OUTPUT_ROOT = "gs://ac215_salesmate_data/data/data_sample-calls_sample_1k_"  #
+BUCKET_NAME = "ac215_salesmate_data"
 
 translate_client = translate_v2.Client()
 
@@ -93,21 +90,21 @@ def col_translation(data_str, keys_to_translate):
 
 
 def translate_df(df):
-    df["feedbacks_translated"] = df["feedbacks"].progress_apply(
-        col_translation, keys_to_translate=KEYS_TO_TRANSLATE
-    )
+    # df["feedbacks_translated"] = df["feedbacks"].progress_apply(
+    #     col_translation, keys_to_translate=KEYS_TO_TRANSLATE
+    # )
     df["transcription_translated"] = df["transcription"].progress_apply(
         col_translation, keys_to_translate=KEYS_TO_TRANSLATE
     )
-    df["overview_translated"] = df["overview"].progress_apply(
-        col_translation, keys_to_translate=KEYS_TO_TRANSLATE
-    )
-    df["positive_translated"] = df["positive"].progress_apply(
-        col_translation, keys_to_translate=KEYS_TO_TRANSLATE
-    )
-    df["negative_translated"] = df["negative"].progress_apply(
-        col_translation, keys_to_translate=KEYS_TO_TRANSLATE
-    )
+    # df["overview_translated"] = df["overview"].progress_apply(
+    #     col_translation, keys_to_translate=KEYS_TO_TRANSLATE
+    # )
+    # df["positive_translated"] = df["positive"].progress_apply(
+    #     col_translation, keys_to_translate=KEYS_TO_TRANSLATE
+    # )
+    # df["negative_translated"] = df["negative"].progress_apply(
+    #     col_translation, keys_to_translate=KEYS_TO_TRANSLATE
+    # )
 
     return df
 
@@ -127,7 +124,6 @@ def save_jsonl_to_gcs(data, bucket_name, destination_blob_name):
 
 
 def process_pipeline(data_path=RAW_EXTRACT_BLOB_NAME, output_path=OUTPUT_ROOT):
-
     storage_client = storage.Client()
     # Get the bucket
     bucket = storage_client.bucket(BUCKET_NAME)

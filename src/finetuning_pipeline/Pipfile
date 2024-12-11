@@ -12,8 +12,10 @@ google-cloud-storage = "*"
 google-cloud-translate = "*"
 google-generativeai = "*"
 google-cloud-aiplatform = ">=1.38"
+google-cloud-secret-manager = "*"
 pandas = "*"
 pytest = "*"
+tensorboard = "*"
 
 [requires]
 python_version = "3.9"

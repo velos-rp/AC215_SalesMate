@@ -3,11 +3,13 @@ from typing import Dict, List
 
 import vertexai
 from api.utils.sytem_prompt import SYSTEM_INSTRUCTION
+from google.cloud import secretmanager
 from vertexai.generative_models import ChatSession, GenerativeModel
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
+SECRET_ID = "llm-endpoint"
 EMBEDDING_MODEL = "text-embedding-004"
 EMBEDDING_DIMENSION = 768
 GENERATIVE_MODEL = "gemini-1.5-flash-002"
@@ -32,9 +34,12 @@ if FINETUNED != "1":
     )
     print("Using general model fir Gemini calls")
 else:
-    MODEL_ENDPOINT = "projects/project-id-3187519002330642642/locations/us-central1/endpoints/6870682135716429824"
+    client = secretmanager.SecretManagerServiceClient()
+    secret_version_name = f"projects/{GCP_PROJECT}/secrets/{SECRET_ID}/versions/latest"
+    response = client.access_secret_version(request={"name": secret_version_name})
+    model_endpoint = response.payload.data.decode("UTF-8")
     generative_model = GenerativeModel(
-        MODEL_ENDPOINT, system_instruction=[SYSTEM_INSTRUCTION]
+        model_endpoint, system_instruction=[SYSTEM_INSTRUCTION]
     )
     print("Using finetuned model for Gemini calls")
 
