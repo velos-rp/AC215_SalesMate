@@ -236,8 +236,8 @@ jobs:
             $IMAGE_NAME
 
             # Execute container build and deployment
-            docker exec $IMAGE_NAME source /app/docker-entrypoint.sh
-            docker exec $IMAGE_NAME gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE
-            docker exec $IMAGE_NAME ansible-playbook deploy-docker-images.yml -i inventory.yml
-            docker exec $IMAGE_NAME ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+            docker exec $IMAGE_NAME /bin/bash -c "source /app/docker-entrypoint.sh"
+            docker exec $IMAGE_NAME /bin/bash -c "gcloud compute project-info add-metadata --project dulcet-doodad-443815-n3 --metadata enable-oslogin=TRUE"
+            docker exec $IMAGE_NAME /bin/bash -c "ansible-playbook deploy-docker-images.yml -i inventory.yml"
+            docker exec $IMAGE_NAME /bin/bash -c "ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present"
 
