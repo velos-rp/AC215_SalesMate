@@ -8,6 +8,11 @@ To run these tests, we use the action workflows with configurations located in t
 
 ### Test Descriptions
 
+#### Frontend
+- `src/frontend-react/src/__tests__/HomePage.test.tsx` Tests the Home Page's ability to fetch the list of chats from the api and render them in a list without crashing.
+- `src/frontend-react/src/__tests__/SimulatorPage.test.tsx` Tests the Simulator Page's ability to fetch the prior messages from an existing chat and render them in the conversation window without crashing.
+
+
 #### API Service
 - `src/api_service/tests/test_direct_chat.py` We have one test that tests the direct chat endpoint to create a chat session. This is a simple test that demands the server returns a success code.
 - `src/api_service/tests/test_rag_endpoint.py` We have one test that tests the sales copilot endpoint. This is a simple test that demands the server returns a success code using a basic query. There is a second test that queries the information from the vector database as well. 
