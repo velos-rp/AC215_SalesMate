@@ -28,3 +28,16 @@ To run these tests, we use the action workflows with configurations located in t
 ### Server Side: CI Workflow 1: `.github/workflows/CI_docker.yml`
 
 This workflow configuration spins up a set of containers using the Github Actions runner. This workflow uses the ubuntu image to load our repo, test basic linting/formatting, securely load our API keys, spin up our main application containers [frontend, api_service, rag_copilot_pipeline], and finally run our pytest tests. This test happens whenever there is a push/merge to main.
+
+
+Examples of Testing Execution Ouput:
+
+### Integration
+![Testing Pipeline](../../images/CI_CD/integration.png)
+
+### Primary API
+![Testing Pipeline](../../images/CI_CD/primary_api_tests.png)
+
+### Finetuning API
+![Testing Pipeline](../../images/CI_CD/finetuning_tests.png)
+
