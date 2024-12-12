@@ -45,14 +45,55 @@ Those containers are orchestrated by the src/docker-compose.yml. To run the fron
 
 More information can be found in the README of each container.
 
+### Usage Details
+
+#### Landing Page
+
+![Landing Page](./images/example_usage/landing_page.png "Landing Page")
+
+The landing page is the first page that users will see when they enter the application. It contains a short description of the application and a button to start a new run.
+
+#### Simulator Page (New Run)
+
+![Simulator Page](images/example_usage/simulator_page.png "Simulator Page")
+
+The simulator page is the core of the sales training experience. It features:
+- **Left Panel: Training Simulator Chat**
+    - Users can engage in a simulated conversation with a "customer".
+    - Conversations are persisted and available for review on the home page after leaving.
+- **Right Panel: Sales Copilot**
+    - Users can query the sales copilot for answers to their questions.
+    - The sales copilot uses a knowledge base to provide answers.
+
+Click on the SalesMate logo in the top left to return to the home page.
+
+#### Sales Copilot Example
+
+![Sales Copilot Example](images/example_usage/copilot_ex.png "Sales Copilot Example")
+
+#### Chat Example
+
+![Chat Example](images/example_usage/chat_example.png "Chat Example")
+
 ### Deployment
 
 The deploy of the application is done using an Ansible playbook contained in:
 
 - src/deployment_gcp
 
+Please take a look at the Readme in the deployment_gcp folder for more information on how to spin up the deployment container and execute the Ansible playbooks for deployment on GCP/Kubernetes.
+
 ### CI/CD
 
 We hvae set up a CI/CD pipeline in github, which is set up inside:
 
 - .github/workflows/CI_docker.yml
+
+See the testing documentation in the `reports/testing_documentation/testing.md` file for more information.
+
+### Testing
+
+Please navigate to `reports/testing_documentation/testing.md` to learn more about the testing pipeline behind Sales Mate. Here you can see screenshots of the github actions workflow as well.
+
+### Known Issues and Limitations
+- Still working out an issue where the Github action for deployment runs out of memory due to limitations in the memory/docker on the default Github action runner.
